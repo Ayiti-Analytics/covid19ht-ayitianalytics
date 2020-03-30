@@ -1,149 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-face.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datetimepicker.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/font-awesome-4.7/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/font-awesome-5/css/fontawesome-all.min.css') }}">
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='vendor/mdi-font/css/material-design-iconic-font.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-4.1/bootstrap.min.css') }}"
-        media="all">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <!-- Fontfaces CSS-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/animsition/animsition.min.css') }}" media="all">
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css') }}"
-        media="all">
-    <!-- Vendor CSS-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css') }}"
-        media="all">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/slick/slick.css') }}" media="all">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}" media="all">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.css') }}"
-        media="all">
-
-
+    <title>Covid19 Vulnerability map</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
-
 <body>
-    <div class="page-wrapper">
-        <!-- HEADER DESKTOP-->
-        <header class="header-desktop3 d-none d-lg-block">
-            <div class="section__content section__content--p35">
-                <div class="header3-wrap">
-                    <div class="header__logo">
-                        <a href="#">
-                            <img src="static/images/Capture.png" height="128px" width="128px" alt="Ayiti Analytics" />
-                        </a>
-                    </div>
-                    <div class="header__navbar">
-                        <ul class="list-unstyled">
-                            <li class="has-sub">
-                                <a href="/">
-                                    <i class="fas fa-tachometer-alt"></i>Dashboard
-                                    <span class="bot-line"></span>
-                                </a>
-
-                            </li>
-                            <li>
-                                <a href="/map">
-                                    <i class="fas fa-map"></i>
-                                    <span class="bot-line"></span>kat rezime</a>
-                            </li>
-                           
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-        </header>
-        <!-- END HEADER DESKTOP-->
-        <!-- HEADER MOBILE-->
-        <header class="header-mobile header-mobile-2 d-block d-lg-none">
-            <div class="header-mobile__bar">
-                <div class="container-fluid">
-                    <div class="header-mobile-inner">
-                        <a class="logo" href="index.html">
-                            <img src="/static/images/icon/logo-white.png" alt="CoolAdmin" />
-                        </a>
-                        <button class="hamburger hamburger--slider" type="button">
-                            <span class="hamburger-box">
-                                <span class="hamburger-inner"></span>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <nav class="navbar-mobile">
-                <div class="container-fluid">
-                    <ul class="navbar-mobile__list list-unstyled">
-                        <li class="has-sub">
-                            <a href="/">
-                                <i class="fas fa-tachometer-alt"></i>Dashboard
-                                <span class="bot-line"></span>
-                            </a>
-
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-map"></i>
-                                <span class="bot-line"></span>kat rezime</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <!-- END HEADER MOBILE -->
-
-        <!-- STATISTIC-->
-
-        <!-- STATISTIC-->
-
-        <!-- kÒ PAG LA-->
-        <div class="page-content--bgf7">
-            {% block body %}
-            {% endblock %}
-        </div>
-
-    </div>
-
-
-    <script src="{{ url_for('static', filename='vendor/jquery-3.2.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/bootstrap-4.1/popper.min.js') }}"></script>
-    <!-- Bootstrap JS-->
-    <script src="{{ url_for('static', filename='vendor/bootstrap-4.1/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/slick/slick.min.js') }}"></script>
-    <!-- Vendor JS       -->
-    <script src="{{ url_for('static', filename='vendor/wow/wow.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/animsition/animsition.min.js') }}"></script>
-    <script
-        src="{{ url_for('static', filename='vendor/bootstrap-progressbar/bootstrap-progressbar.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/counter-up/jquery.waypoints.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/counter-up/jquery.counterup.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/circle-progress/circle-progress.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/chartjs/Chart.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-        crossorigin="anonymous"></script>
-
+    
+    {% include 'include/navbar.html' %}
+    {% block body %}
+    
+    {% endblock body %}
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
-
 </html>

@@ -32,7 +32,7 @@ folium.Choropleth(
     fill_color='Oranges',
     fill_opacity=0.7,
     line_opacity=0.5,
-    legend_name='Unemployment Rate (%)',
+    legend_name='Population',
     reset=True
 ).add_to(m)
 
@@ -42,13 +42,9 @@ Application = Flask(__name__)
 
 # define default route
 @Application.route('/')
-def index():
-    return render_template("dashboard.html")
-
-@Application.route('/map')
 def map():
-    m.save('map.html')
-    return render_template("index_map.html")
+    m.save('templates/map.html')
+    return render_template("index.html")
 
 if __name__ == '__main__':
     Application.run(debug=True)
