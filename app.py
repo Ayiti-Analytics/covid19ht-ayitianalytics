@@ -37,14 +37,14 @@ folium.Choropleth(
 ).add_to(m)
 
 # use flask module
-Application = Flask(__name__)
+app = Flask(__name__)
  
 
 # define default route
-@Application.route('/')
+@app.route('/')
 def map():
     m.save('templates/map.html')
     return render_template("index.html")
 
 if __name__ == '__main__':
-    Application.run(debug=True)
+    app.run(debug=True)
