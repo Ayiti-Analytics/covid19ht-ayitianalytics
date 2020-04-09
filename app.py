@@ -91,26 +91,9 @@ def index():
    if request.method == 'POST':
        dept_name = request.form['departement'] 
       # fourth
-       
+    
       
-       if request.form.get("hosp"):
-           hosp_checked =1
-           col.append('Hospitals')
-           print('1231313')
-       if request.form.get("disp"):
-            col.append('Dispensair')
-            disp_checked = 1
-           
-       if request.form.get("cal"):
-            col.append('CAL')
-            cal_checked = 1
-   if len(col) != 0:
-       data_gpd['Total_sites'] =data_gpd[col].sum(axis =1)
-       data_gpd['health_density'] = (com_gpd['Total_sites']/com_gpd['IHSI_UNFPA'])*10000
-       data_gpd['health_density'].astype(np.float32)
-       data_gpd.loc[data_gpd['health_density'] == 0.0,'health_density'] = 0.001
-       data_gpd['health_density'] = np.log(data_gpd['health_density'])
-       print(col)
+       
    val = data_gpd.copy()
    if dept_name != 'all':
        val = data_gpd[data_gpd['ADM1_FR'] == dept_name ].copy()        
