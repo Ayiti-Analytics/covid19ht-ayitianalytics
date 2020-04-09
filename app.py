@@ -72,10 +72,11 @@ def plot_map(gdf,val, column=None, title='',tooltip=None):
 
 sectiontool=[   ("Departement","@ADM1_FR"),
                 ("Commune","@ADM2_FR"),
-                ("Section Communale","@ADM3_FR"),
                 ("Population","@IHSI_UNFPA"),
-                ("Nombre de site","@Total_sites"),
-                
+                ("Nombre de sites","@Total_sites"),
+                ("Nombre de dispensaires","@Dispensair"),
+                ("Nombre d'hopitaux ","@Hospitals"),
+                ("Nombre de centres de santé avec lits ","@CAL"),
                 ]
 
 
