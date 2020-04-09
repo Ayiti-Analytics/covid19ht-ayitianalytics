@@ -21,6 +21,7 @@ site_facilities_col = ['ADM1_FR','ADM2_FR','CAL', 'Dispensair', 'HCR', 'HD', 'HU
 # Compute the total of sites
 com_gpd['Total_sites'] = com_gpd[site_facilities_col].sum(axis=1)
 com_gpd['Hospitals'] = com_gpd[['HCR', 'HD', 'HU','hop', 'hop_specia']].sum(axis=1)
+com_gpd[['HCR', 'HD', 'HU','hop', 'hop_specia']].fillna(value=0,inplace=True)
 data_gpd = com_gpd[['IHSI_UNFPA','Hospitals']+site_facilities_col+['Total_sites','geometry']].copy()
 data_gpd.set_geometry('geometry')
 # Evaluate the density of (Number of health facilities / Total population in a designated area)
