@@ -1,139 +1,133 @@
-# import flask librairy
-from flask import Flask, render_template
-import psycopg2
-# import pandas pd
-import pandas as pd
-# import folium for geomapping
-import folium
+from flask import Flask ,render_template,request
+from bokeh.embed import components
+from os.path import dirname, join
+from bokeh.io import curdoc
+from bokeh.plotting import figure
+from bokeh.models import Label, GeoJSONDataSource, LinearColorMapper, ColorBar,Dropdown, Select,HoverTool,Panel, Tabs,TapTool,Text
+from bokeh.layouts import column, row, widgetbox
+from bokeh.palettes import brewer
 import geopandas as gpd
+import json
+import sys
 import numpy as np
-from sqlalchemy import create_engine
-import os
+from flask import jsonify
+#reading geodata
+# read section_communales shapefile
+com_gpd = gpd.read_file('data/combined/v0_com_data.shp')
+print(com_gpd.head().columns)
+#'CAL', 'CSL', 'Dispensair', 'HCR', 'HD', 'HU','hop', 'hop_specia'
+site_facilities_col = ['ADM1_FR','ADM2_FR','CAL', 'Dispensair', 'HCR', 'HD', 'HU','hop', 'hop_specia']
 
-# pd_pop_adm1 = pd.read_excel('./datasets/hti_adminboundaries_tabulardata.xlsx',sheet_name ='hti_pop2019_adm1',encoding ='utf-16')
-# pd_pop_adm2 = pd.read_excel('./datasets/hti_adminboundaries_tabulardata.xlsx',sheet_name ='hti_pop2019_adm2',encoding ='utf-16')
-# pd_pop_adm3 = pd.read_excel('./datasets/hti_adminboundaries_tabulardata.xlsx',sheet_name ='hti_pop2019_adm3',encoding ='utf-16')
+# Compute the total of sites
+com_gpd['Total_sites'] = com_gpd[site_facilities_col].sum(axis=1)
+com_gpd['Hospitals'] = com_gpd[['HCR', 'HD', 'HU','hop', 'hop_specia']].sum(axis=1)
+data_gpd = com_gpd[['IHSI_UNFPA','Hospitals']+site_facilities_col+['Total_sites','geometry']].copy()
+data_gpd.set_geometry('geometry')
+# Evaluate the density of (Number of health facilities / Total population in a designated area)
+data_gpd['health_density'] = (com_gpd['Total_sites']/com_gpd['IHSI_UNFPA'])*10000
+data_gpd['health_density'].astype(np.float32)
+data_gpd.loc[data_gpd['health_density'] == 0.0,'health_density'] = 0.001
+data_gpd['health_density'] = np.log(data_gpd['health_density'])
 
-# definition of the boundaries in the map
-# coummune_geo = r'./datasets/commune.geojson'
-  
-# calculating total number of incidents per district
-# commune2 = pd.DataFrame(pd_pop_adm2['adm2code'].value_counts().astype(float))
-# commune2 = commune2.reset_index()
-# commune2.columns = ['adm2code', 'Number']
-# coord_ht = (18.788304610553055,-72.23655910919523)
-# m = folium.Map(
-#    location=coord_ht,
- #   tiles='Mapbox Bright',
- #   zoom_start=8.4 # Limited levels of zoom for free Mapbox tiles.
-#)
+def getDataset(geodata, name, adm_division):
+    #name: name of the adm division
+    #adm_division: type of adm division
+    v=geodata.copy()
+    v.set_index(adm_division,inplace=True)
+    x=v.loc[name].copy()
+    x.reset_index(inplace=True)
+    print(x.columns)
+    print(x.shape)
+    return x
 
-#folium.Choropleth(
-    #geo_data=coummune_geo,
-    #data=pd_pop_adm2,
-    #columns= ['adm2code', 'IHSI_UNFPA_2019'],
-    #key_on='feature.properties.ADM2_PCODE',
-    #fill_color='Oranges',
-    #fill_opacity=0.7,
-    #line_opacity=0.5,
-    #legend_name='Population',
-   # reset=True
-#).add_to(m)
-#reading  section communales geodata
-
-# read sections communales shapefiles
-sections_gpd = gpd.read_file('data/combined/v0_sec_data.shp')
-sections_gpd.set_geometry('geometry')
-
-# computing long,lat for each secton communale  using centroid function
-sections_gpd['x'] = sections_gpd.geometry.centroid.x
-sections_gpd['y'] = sections_gpd.geometry.centroid.y
-
-# convert section communale geodataframe to geojson
-sections_gpd.to_file("output/section_com.geojson", driver='GeoJSON')
-
-# selecting features needed
-features_selected_level3 = [column for column in sections_gpd.columns if column not in ['Shape_Leng','Shape_Area','geometry']]
-
-# computing the population /hospital density
-# selecting columns needed
-hospital_features = ['CAL', 'Dispensair', 'HCR', 'HD', 'HU', 'hop', 'hop_specia','ADM3_EN']
-# compute the total of hospitals
-sections_gpd['Total hopitals'] = sections_gpd[hospital_features].sum(axis = 1)
-# replace 0 by 0.000000001  to manages infinity values
-sections_gpd.loc[sections_gpd['Total hopitals'] == 0, 'Total hopitals'] = 0.000000001
-#  density  (1k people)
-sections_gpd['IHSI_UNFPA/Total hopitals'] = np.round(sections_gpd['IHSI_UNFPA']/sections_gpd['Total hopitals']/1000.0, 2)
-
-sections_gpd.IHSI_UNFPA = sections_gpd.IHSI_UNFPA / 1000.0
-mymap = folium.Map(location=[sections_gpd.y.mean(), sections_gpd.x.mean()], start_zoom=7, tiles=None)
-folium.TileLayer('CartoDB positron', name="Light Map", control=False).add_to(mymap)
-bins = np.linspace(sections_gpd['IHSI_UNFPA/Total hopitals'].min(), sections_gpd['IHSI_UNFPA/Total hopitals'].max(), 10)
-myscale = (sections_gpd['IHSI_UNFPA/Total hopitals'].quantile((0, .25, 0.5, 0.75, 1))).tolist()
-mymap.choropleth(
-    geo_data='output/section_com.geojson',
-    name='density ',
-    data=sections_gpd,
-    columns=['ADM3_EN', 'IHSI_UNFPA/Total hopitals'],
-    key_on="feature.properties.ADM3_EN",
-    fill_color='YlOrRd',
-
-    threshold_scale=myscale,
-    fill_opacity=0.8,
-    line_opacity=0.2,
-    legend_name='',
-    smooth_factor=0
-)
-
-style_function = lambda x: {'fillColor': '#ffffff',
-                            'color':'#000000',
-                            'fillOpacity': 0.1,
-                            'weight': 0.1}
-highlight_function = lambda x: {'fillColor': '#000000',
-                                'color':'#000000',
-                                'fillOpacity': 0.50,
-                                'weight': 0.1}
-sec = folium.features.GeoJson(
-    'output/section_com.geojson',
-    style_function=style_function,
-    control=True,
-    highlight_function=highlight_function,
-    tooltip=folium.features.GeoJsonTooltip(
-        fields=['ADM3_EN','IHSI_UNFPA','CAL', 'Dispensair', 'HCR', 'HD', 'HU', 'hop', 'hop_specia'],
-        aliases=['Section communales: ','Nombre de personnes','CAL','Dispensaire','Hopital communautaire de reference','Hopital D.','Hopital universitaire','Hopital','Hopital Specialise'],
-        style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;")
-    )
-)
-mymap.add_child(sec)
-mymap.keep_in_front(sec)
-folium.LayerControl(name ='essaa').add_to(mymap)
-mymap
-
-## Database parametter connection
-def get_posgres_connection():
-    db_name = os.getenv("PSQL_DB_NAME")
-    db_user = os.getenv("PSQL_DB_USER")
-    db_password = os.getenv("PSQL_DB_PASSWORD")
-    db_host = os.getenv("PSQL_DB_HOST")
-    sql_engine = create_engine(f'postgresql://{db_user}:{db_password}@{db_host}:5432/{db_name}')
-    return sql_engine
+def getGeoSource(gdf):
+    merged_json=json.loads(gdf.to_json())
+    json_data = json.dumps(merged_json)
+    return GeoJSONDataSource(geojson = json_data)
 
 
+def plot_map(gdf,val, column=None, title='',tooltip=None):
+    #code from https://github.com/dmnfarrell/teaching/blob/master/geo/maps_python.ipynb
+    geosource=getGeoSource(val)
+    palette = brewer['RdYlBu'][8]
+    palette = palette[::-1]
+    vals = gdf[column]
+    
+       #Instantiate LinearColorMapper that linearly maps numbers in a range, into a sequence of colors.
+    color_mapper = LinearColorMapper(palette = palette, low = vals.min(), high = vals.max())
+    color_bar = ColorBar(color_mapper=color_mapper, label_standoff=8, width=500, height=20, 
+                         location=(0,0), orientation='horizontal')
+    p1 = figure(title=title)
+    p1.axis.visible = False
+    p1.xgrid.visible = False
+    p1.ygrid.visible = False
+    p1.patches('xs','ys',source=geosource, line_color = "black", line_width = 0.25, fill_alpha = 1,
+               fill_color={'field' :column , 'transform': color_mapper},)
+    TOOLTIPS = tooltip
+    p1.width = 1000
+    p1.height = 700
+    p1.add_tools(HoverTool(tooltips=TOOLTIPS))
+    p1.add_layout(color_bar, 'below')
+    return p1
 
-# use flask module
+sectiontool=[   ("Departement","@ADM1_FR"),
+                ("Commune","@ADM2_FR"),
+                ("Section Communale","@ADM3_FR"),
+                ("Population","@IHSI_UNFPA"),
+                ("Nombre de site","@Total_sites"),
+                
+                ]
+
+
 app = Flask(__name__)
- 
 
-# define default route
-@app.route('/')
-def map():
-    mymap.save('templates/map.html')
-    return render_template("index.html")
+@app.route('/',methods=['GET', 'POST'])
+def index():
+   dept = dict(name = list(set(data_gpd['ADM1_FR'])))
+   dept_name = 'all'
+   col = []
+   hosp_checked, disp_checked, cal_checked = 0, 0, 0
+   if request.method == 'POST':
+       dept_name = request.form['departement'] 
+      # fourth
+       
+      
+       if request.form.get("hosp"):
+           hosp_checked =1
+           col.append('Hospitals')
+           print('1231313')
+       if request.form.get("disp"):
+            col.append('Dispensair')
+            disp_checked = 1
+           
+       if request.form.get("cal"):
+            col.append('CAL')
+            cal_checked = 1
+   if len(col) != 0:
+       data_gpd['Total_sites'] =data_gpd[col].sum(axis =1)
+       data_gpd['health_density'] = (com_gpd['Total_sites']/com_gpd['IHSI_UNFPA'])*10000
+       data_gpd['health_density'].astype(np.float32)
+       data_gpd.loc[data_gpd['health_density'] == 0.0,'health_density'] = 0.001
+       data_gpd['health_density'] = np.log(data_gpd['health_density'])
+       print(col)
+   val = data_gpd.copy()
+   if dept_name != 'all':
+       val = data_gpd[data_gpd['ADM1_FR'] == dept_name ].copy()        
+   p3=plot_map(val=val,gdf = data_gpd,column="health_density",title=" Hopital par 10000 habitants",tooltip=sectiontool )
+   script, div = components(p3)
+   
+   return render_template("index.html", script=script, div=div,dept=dept, dept_name =dept_name,hosp_checked=hosp_checked,disp_checked=disp_checked,cal_checked=cal_checked)
+   
+
+@app.route("/commune/<dept_name>")
+def commune_list (dept_name):
+    if dept_name == 'all':
+        return jsonify(None)
+
+    commune = dict(name = list(set(data_gpd['ADM2_FR'][data_gpd['ADM1_FR'] == dept_name])))
+    return jsonify(commune)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+	app.run(port=5000, debug=True)
 
-#export PSQL_DB_HOST="haiti-data.cgz5ttlgvxan.us-east-2.rds.amazonaws.com"
-#export PSQL_DB_USER="ayiti"
-#export PSQL_DB_PASSWORD="pasgenprobleme"
-#export PSQL_DB_NAME="postgres"
+# with your other routes...
