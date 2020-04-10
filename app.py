@@ -98,7 +98,7 @@ def plot_map(gdf, column=None, title='',tooltip=None):
 
 sectiontool=[   ("Departement","@ADM1_FR"),
                 ("Commune","@ADM2_FR"),
-                ("Commune","@ADM3_FR"),
+                ("Section commune","@ADM3_FR"),
                 ("Population","@IHSI_UNFPA"),
                 ("Nombre de sites","@Total_sites"),
                 ("Nombre de dispensaires","@Dispensair"),
@@ -112,6 +112,8 @@ app = Flask(__name__)
 @app.route('/',methods=['GET', 'POST'])
 def index():
    gdf2 = get_filtered_dataset('departement','all')
+   gdf2['Total_sites'] = gdf2['Total_sites'].astype('int')
+   gdf2['IHSI_UNFPA']=gdf2['IHSI_UNFPA'].astype('int')
    gdf = None
    division = 'commune'
    etablissement ='all'
