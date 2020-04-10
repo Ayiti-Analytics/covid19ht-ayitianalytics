@@ -13,22 +13,47 @@ import numpy as np
 from flask import jsonify
 #reading geodata
 # read section_communales shapefile
-com_gpd = gpd.read_file('data/combined/v0_com_data.shp')
-print(com_gpd.head().columns)
-#'CAL', 'CSL', 'Dispensair', 'HCR', 'HD', 'HU','hop', 'hop_specia'
-site_facilities_col = ['ADM1_FR','ADM2_FR','CAL', 'Dispensair', 'HCR', 'HD', 'HU','hop', 'hop_specia']
 
-# Compute the total of sites
-com_gpd['Total_sites'] = com_gpd[site_facilities_col].sum(axis=1)
-com_gpd['Hospitals'] = com_gpd[['HCR', 'HD', 'HU','hop', 'hop_specia']].sum(axis=1)
-com_gpd[['HCR', 'HD', 'HU','hop', 'hop_specia']].fillna(value=0,inplace=True)
-data_gpd = com_gpd[['IHSI_UNFPA','Hospitals']+site_facilities_col+['Total_sites','geometry']].copy()
-data_gpd.set_geometry('geometry')
-# Evaluate the density of (Number of health facilities / Total population in a designated area)
-data_gpd['health_density'] = (com_gpd['Total_sites']/com_gpd['IHSI_UNFPA'])*10000
-data_gpd['health_density'].astype(np.float32)
-data_gpd.loc[data_gpd['health_density'] == 0.0,'health_density'] = 0.001
-data_gpd['health_density'] = np.log(data_gpd['health_density'])
+# create dataset function
+def get_filtered_dataset(filter,col):
+    gdf =None
+    site_facilities_col = None
+    if filter == 'commune':
+        gdf = gpd.read_file('data/combined/v0_com_data.shp')
+    elif filter == 'departement':
+        gdf = gpd.read_file('data/combined/v0_dep_data.shp')
+    else:
+        gdf = gpd.read_file('data/combined/v0_sec_data.shp')
+    
+    gdf['Hospitals'] = gdf[['HCR', 'HD', 'HU','hop', 'hop_specia']].sum(axis=1)
+    if col == 'all':
+        site_facilities_col = ['CAL', 'Dispensair', 'Hospitals']
+    elif col == 'hosp':
+        site_facilities_col = ['Hospitals']
+    elif col == 'cal':
+        site_facilities_col = ['CAL']
+    elif col == 'disp':
+        site_facilities_col = ['Dispensair']
+    elif col  == 'disp+cal':
+        site_facilities_col = ['Dispensair','CAL']
+    elif col  == 'hosp+cal':
+        site_facilities_col = ['Hospitals','CAL']
+    else:
+        site_facilities_col = ['Hospitals','Dispensair']
+
+    admin_cols = [col for col in gdf.columns if col not in site_facilities_col+['HCR', 'HD', 'HU','hop', 'hop_specia','Dispensair','CAL','Hospitals']]
+    gdf = gdf[admin_cols+site_facilities_col]
+    gdf[site_facilities_col] = gdf[site_facilities_col].fillna(0.0)
+    gdf['Total_sites'] =gdf[site_facilities_col].sum(axis=1)
+    gdf['health_density'] = np.round((gdf['Total_sites']/gdf['IHSI_UNFPA'])*10000,3)
+    return gdf
+    
+map_dict ={'all':'Total des établissements de santé','hosp':'Hopitaux','cal':'Centres de santé avec lits','disp':'Dispensaires','disp+cal':'Dispensaires + Centres de santé avec lits','hosp+cal':'Hopitaux + Centres de santé avec lits','hosp+disp':'Hopitaux + Dispensaires'}
+
+
+
+
+
 
 def getDataset(geodata, name, adm_division):
     #name: name of the adm division
@@ -47,10 +72,10 @@ def getGeoSource(gdf):
     return GeoJSONDataSource(geojson = json_data)
 
 
-def plot_map(gdf,val, column=None, title='',tooltip=None):
+def plot_map(gdf, column=None, title='',tooltip=None):
     #code from https://github.com/dmnfarrell/teaching/blob/master/geo/maps_python.ipynb
-    geosource=getGeoSource(val)
-    palette = brewer['RdYlBu'][8]
+    geosource=getGeoSource(gdf)
+    palette = brewer['RdYlBu'][10]
     palette = palette[::-1]
     vals = gdf[column]
     
@@ -62,17 +87,18 @@ def plot_map(gdf,val, column=None, title='',tooltip=None):
     p1.axis.visible = False
     p1.xgrid.visible = False
     p1.ygrid.visible = False
-    p1.patches('xs','ys',source=geosource, line_color = "black", line_width = 0.25, fill_alpha = 1,
+    p1.patches('xs','ys',source=geosource, line_color = "white", line_width =1, fill_alpha = 0.8,
                fill_color={'field' :column , 'transform': color_mapper},)
     TOOLTIPS = tooltip
     p1.width = 1000
-    p1.height = 700
+    p1.height = 850
     p1.add_tools(HoverTool(tooltips=TOOLTIPS))
-    p1.add_layout(color_bar, 'below')
+    p1.add_layout(color_bar, 'above')
     return p1
 
 sectiontool=[   ("Departement","@ADM1_FR"),
                 ("Commune","@ADM2_FR"),
+                ("Commune","@ADM3_FR"),
                 ("Population","@IHSI_UNFPA"),
                 ("Nombre de sites","@Total_sites"),
                 ("Nombre de dispensaires","@Dispensair"),
@@ -85,23 +111,23 @@ app = Flask(__name__)
 
 @app.route('/',methods=['GET', 'POST'])
 def index():
-   dept = dict(name = list(set(data_gpd['ADM1_FR'])))
-   dept_name = 'all'
-   col = []
-   hosp_checked, disp_checked, cal_checked = 0, 0, 0
+   gdf2 = get_filtered_dataset('departement','all')
+   gdf = None
+   division = 'commune'
+   etablissement ='all'
    if request.method == 'POST':
-       dept_name = request.form['departement'] 
+       division = request.form['division'] 
+       etablissement =request.form['etablissement']
       # fourth
-    
-      
+       gdf = get_filtered_dataset(division,etablissement)
+   else :
+        gdf = get_filtered_dataset(division,etablissement)
        
-   val = data_gpd.copy()
-   if dept_name != 'all':
-       val = data_gpd[data_gpd['ADM1_FR'] == dept_name ].copy()        
-   p3=plot_map(val=val,gdf = data_gpd,column="health_density",title=" Hopital par 10000 habitants",tooltip=sectiontool )
+   p3=plot_map(gdf = gdf,column="Total_sites",title=map_dict[etablissement]+ ' par '+ division,tooltip=sectiontool )
    script, div = components(p3)
+   div.replace('class="bk-root"','class="bk-root col-12 style="height: 100%')
    
-   return render_template("index.html", script=script, div=div,dept=dept, dept_name =dept_name,hosp_checked=hosp_checked,disp_checked=disp_checked,cal_checked=cal_checked)
+   return render_template("index.html", script=script, div=div,division=division, etablissement =etablissement,gdf2=gdf2)
    
 
 @app.route("/commune/<dept_name>")
