@@ -14,39 +14,58 @@ from flask import jsonify
 #reading geodata
 # read section_communales shapefile
 
+
+
+    
+
 # create dataset function
 def get_filtered_dataset(filter,col):
+    sectiontool=[]
     gdf =None
     site_facilities_col = None
+
     if filter == 'commune':
         gdf = gpd.read_file('data/combined/v0_com_data.shp')
+        sectiontool.append( ("Departement","@ADM1_FR"))
+        sectiontool.append(("Commune","@ADM2_FR"))
+
     elif filter == 'departement':
         gdf = gpd.read_file('data/combined/v0_dep_data.shp')
+        sectiontool.append( ("Departement","@ADM1_FR"))
     else:
         gdf = gpd.read_file('data/combined/v0_sec_data.shp')
+        sectiontool.append( ("Departement","@ADM1_FR"))
+        sectiontool.append(("Commune","@ADM2_FR"))
+        sectiontool.append(("Section commune","@ADM3_FR"))
     
     gdf['Hospitals'] = gdf[['HCR', 'HD', 'HU','hop', 'hop_specia']].sum(axis=1)
+
+
+
     if col == 'all':
         site_facilities_col = ['CAL', 'Dispensair', 'Hospitals']
+        sectiontool.append(("Nombre de dispensaires","@Dispensair"))
+        sectiontool.append( ("Nombre d'hopitaux ","@Hospitals"))
+        sectiontool.append( ("Nombre de centres de santé avec lits ","@CAL"))
     elif col == 'hosp':
         site_facilities_col = ['Hospitals']
+        sectiontool.append( ("Nombre d'hopitaux ","@Hospitals"))
+       
     elif col == 'cal':
         site_facilities_col = ['CAL']
+        sectiontool.append( ("Nombre de centres de santé avec lits ","@CAL"))
     elif col == 'disp':
         site_facilities_col = ['Dispensair']
-    elif col  == 'disp+cal':
-        site_facilities_col = ['Dispensair','CAL']
-    elif col  == 'hosp+cal':
-        site_facilities_col = ['Hospitals','CAL']
-    else:
-        site_facilities_col = ['Hospitals','Dispensair']
+        sectiontool.append(("Nombre de dispensaires","@Dispensair"))
+   
 
     admin_cols = [col for col in gdf.columns if col not in site_facilities_col+['HCR', 'HD', 'HU','hop', 'hop_specia','Dispensair','CAL','Hospitals']]
     gdf = gdf[admin_cols+site_facilities_col]
     gdf[site_facilities_col] = gdf[site_facilities_col].fillna(0.0)
     gdf['Total_sites'] =gdf[site_facilities_col].sum(axis=1)
     gdf['health_density'] = np.round((gdf['Total_sites']/gdf['IHSI_UNFPA'])*10000,3)
-    return gdf
+    sectiontool.append(("Nombre de sites","@Total_sites"))
+    return sectiontool,gdf
     
 map_dict ={'all':'Total des établissements de santé','hosp':'Hopitaux','cal':'Centres de santé avec lits','disp':'Dispensaires','disp+cal':'Dispensaires + Centres de santé avec lits','hosp+cal':'Hopitaux + Centres de santé avec lits','hosp+disp':'Hopitaux + Dispensaires'}
 
@@ -91,41 +110,40 @@ def plot_map(gdf, column=None, title='',tooltip=None):
                fill_color={'field' :column , 'transform': color_mapper},)
     TOOLTIPS = tooltip
     p1.width = 1000
-    p1.height = 850
+    p1.height = 830
     p1.add_tools(HoverTool(tooltips=TOOLTIPS))
     p1.add_layout(color_bar, 'above')
     return p1
 
-sectiontool=[   ("Departement","@ADM1_FR"),
-                ("Commune","@ADM2_FR"),
-                ("Section commune","@ADM3_FR"),
-                ("Population","@IHSI_UNFPA"),
-                ("Nombre de sites","@Total_sites"),
-                ("Nombre de dispensaires","@Dispensair"),
-                ("Nombre d'hopitaux ","@Hospitals"),
-                ("Nombre de centres de santé avec lits ","@CAL"),
-                ]
+
+
+
+
 
 
 app = Flask(__name__)
 
 @app.route('/',methods=['GET', 'POST'])
 def index():
-   gdf2 = get_filtered_dataset('departement','all')
+   _,gdf2 = get_filtered_dataset('departement','all')
+   gdf2.sort_values(by =['IHSI_UNFPA'],ascending=False,inplace=True)
    gdf2['Total_sites'] = gdf2['Total_sites'].astype('int')
    gdf2['IHSI_UNFPA']=gdf2['IHSI_UNFPA'].astype('int')
    gdf = None
+   sectiontool=[]
+   
    division = 'commune'
    etablissement ='all'
    if request.method == 'POST':
        division = request.form['division'] 
        etablissement =request.form['etablissement']
       # fourth
-       gdf = get_filtered_dataset(division,etablissement)
+       sectiontool,gdf = get_filtered_dataset(division,etablissement)
    else :
-        gdf = get_filtered_dataset(division,etablissement)
+       sectiontool,gdf = get_filtered_dataset(division,etablissement)
        
-   p3=plot_map(gdf = gdf,column="Total_sites",title=map_dict[etablissement]+ ' par '+ division,tooltip=sectiontool )
+   
+   p3=plot_map(gdf = gdf,column="Total_sites",title='Répartition des centres de santé par '+ division,tooltip=sectiontool )
    script, div = components(p3)
    div.replace('class="bk-root"','class="bk-root col-12 style="height: 100%')
    
