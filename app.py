@@ -111,11 +111,14 @@ def df_map_color(data,column,palette = 'RdYlBu',range = 10):
     palette = brewer['RdYlBu'][range]
     # reverses the color palette
     palette =palette[::-1]
-    # 
+    # add the color column to dataframe
     data['color'] = pd.cut(data[column], bins=range,labels=list(palette))
+    # computes the palette legend
     color_map = data[data.color.notna()].groupby(['color'])[column].min().to_frame().reset_index() 
+    # removes non display colunms
     color_map = color_map[color_map[column].notna()]
     return color_map,data
+
 
 def plot_map(gdf, column=None, title='',tooltip=None):
     #code from https://github.com/dmnfarrell/teaching/blob/master/geo/maps_python.ipynb
@@ -191,7 +194,9 @@ def get_geodata (division,etablissement,methods=['GET', 'POST']):
 # api route for leaflet map
 @app.route('/index2',methods=['GET', 'POST'])
 def index2():
+    # call the filtered dataset for departement table (division,site)
    _,gdf2 = get_filtered_dataset('departement','all')
+
    gdf2.sort_values(by =['IHSI_UNFPA'],ascending=False,inplace=True)
    gdf2['Total_sites'] = gdf2['Total_sites'].astype('int')
    gdf2['IHSI_UNFPA']=gdf2['IHSI_UNFPA'].astype('int')
