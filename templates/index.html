@@ -17,30 +17,11 @@
 </head>
 
 <body>
-  <nav class="navbar-expand-md navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Covid19</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Map <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Dashboard<span class="sr-only">(current)</span></a>
-        </li>
-
-      </ul>
-
-    </div>
-  </nav>
+  {% include 'include/navbar.html' %}
   <div class="container-fluid  m-t-5">
     <br />
     <div class="row clearfix">
-      <div class="col-4 col-lg-4 col-md-4 col-sm-12">
+      <div class="col-lg-4 col-md-12 col-sm-12">
 
         <div class="row">
           <div class="col-12">
@@ -126,11 +107,11 @@
 
 
       </div>
-      <div class="col-8 col-lg-8 col-md-8 col-sm-12">
-        <div clas="col-12 col-lg-12 col-md-12 col-sm-12">
+      <div class="col-lg-7 col-md-12 col-sm-12" style="height: 90vh;">
+       
           {{ script|safe }}
           {{ div|safe }}
-        </div>
+       
 
       </div>
     </div>
