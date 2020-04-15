@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Covid19 Vulnerability map</title>
-    <script src=" {{ url_for('static', filename='leaflet/dist/leaflet.js') }}"></script>
+    <script src=" {{ url_for('static', filename='bootstrap/dist/css/bootstrap.css') }}"></script>
+    <script src=" {{ url_for('static', filename='jquery/dist/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='leaflet/dist/leaflet.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='leaflet/dist/leaflet.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -15,6 +17,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /*Setup*/
+        @media only screen and (max-width: 600px) {
+            .legend i {
+                width: 10px;
+                height: 10px;
+                float: left;
+                margin: 0 8px 0 0;
+                opacity: 0.7;
+                font-size: 8px;
+            }
+          }
+    
         html,
         body {
             padding: 0;
@@ -172,9 +185,11 @@
 
 
             </div>
-            <div class="col-lg-8 col-md-12 col-sm-12" style="height: 88vh;" id="map">
+            <div class="col-lg-8 col-md-12 col-sm-12" style="height: 88vh;" >
+             <h5 style="font-size: 16px;font-weight:bold">Répartition des centres de santé par  {{division}} <button id="ressetbutton"class="btn btn-primary" style="float: right; margin-bottom:4px">Rafraichir la carte</button></h5>
+             <div id="map" style="height: 90vh;">
 
-
+             </div>
 
             </div>
         </div>
@@ -187,10 +202,14 @@
         let etablissement = '{{etablissement}}';
         let tool = '{{tool_tips|tojson}}'
         let pal = '{{palette|tojson}}'
+        let win = $(window)
+       
         console.log(pal)
         let palette = jQuery.parseJSON(pal)
         toolTips = jQuery.parseJSON(tool)
+
        
+     
 
         $('#division').val(division)
         $('#etablissement').val(etablissement)
@@ -204,6 +223,36 @@
             zoomOffset: -1,
 
         }).addTo(map);
+        
+        if (win.width() <= 768) {
+            map.setView([19.071187, -72.785215], 8)
+         }
+        else{
+            map.setView([19.071187, -72.785215], 8.5 )
+        }
+        
+
+        $('#ressetbutton').click(function(){
+            console.log('hello world ...!')
+            map.setView([19.071187, -72.785215], 8.5)
+            var win =  $(window)
+            if (win.width() <= 768) {
+                map.setView([19.071187, -72.785215], 8)
+             }
+            else{
+                map.setView([19.071187, -72.785215], 8.5 )
+            }
+        })
+       
+        $(window).on('resize', function(){
+            var win = $(this); //this = window
+            if (win.width() <= 768) {
+                map.setView([19.071187, -72.785215], 8)
+             }
+            else{
+                map.setView([19.071187, -72.785215], 8.5 )
+            }
+      });
 
         
         info = new L.Control( {position: 'bottomright'});
@@ -215,20 +264,16 @@
         };
 
         info.update = function (props) {
-            this._div.innerHTML =
-                "<h5>Répartition des centres de santé par " + division + " </h5>" +
-                (props ? "<b>" + "Departement: " + props.ADM1_FR + "</b><br />" : "");
-
         };
 
         function style(feature) {
             return {
                 fillColor: feature.properties.color,
                 weight: 1,
-                opacity: 1.5,
+                opacity: 1,
                 color: 'white',
                 dashArray: '1',
-                fillOpacity: 0.9
+                fillOpacity: 0.7
             };
         }
 
@@ -263,13 +308,13 @@
             layer.on({
                 mouseover: highlightFeature,
                 mouseout: resetHighlight,
-                click: highlightFeature
+                
             });
         }
         
 
 
-        var legend = L.control({ position: 'topright' });
+        var legend = L.control({ position: 'topleft' });
 
         legend.onAdd = function (map) {
 
@@ -313,10 +358,11 @@
                             <th style="padding: 4px; padding-right: 10px;">
                                 ${aliases[fields.indexOf(columnname)]
                                         }
-                            </th>
+                                
                             
-                            <td style="padding: 4px;">${handleObject(layer.feature.properties[columnname])
-                                        }</td></tr>`
+                            
+                            : ${handleObject(layer.feature.properties[columnname])
+                                        }</th></tr>`
                                 ).join(''))
                             + '</table>'
                     }, { "sticky": true }
