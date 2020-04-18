@@ -12,6 +12,104 @@ import sys
 import numpy as np
 from flask import jsonify
 from flask_cors import CORS
+
+def generate_PCODE(depart):
+     code = '00'+ str(depart)
+     return 'HT'+ code[len(code)-2:]
+     
+def generate_PCODE2(vilcom):
+     code = '00'+ str(vilcom)
+     return code[len(code)-2:]
+
+def load_com(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
+
+    # STEP 1
+    # loads spa dataset
+    spa = pd.read_csv('spa.csv')
+    # replaces blank space by (_)
+    spa['facdesc_1'] = spa['facdesc_1'].str.replace(' ','_')
+    # computes dummies columns
+    spa = pd.get_dummies(spa, columns=['facdesc_1'],prefix='',prefix_sep='')
+    # sums the site health facilities
+    com  = spa.groupby(['depart','departn','vilcomn','vilcom'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL'].sum().reset_index()
+    # renames columns needed
+    com= com.rename(columns={'departn':'ADM1_FR','vilcomn':'ADM2_FR'})
+    # generats PCODE
+    com['ADM2_PCODE'] = com['depart'].apply(lambda x: generate_PCODE(x))+ com['vilcom'].apply(lambda x: generate_PCODE2(x))
+    # remove duplicates
+    com =com.groupby(['ADM2_PCODE'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL'].sum().reset_index()
+
+    # STEP 2
+    # reads adm2 shapefiles
+    boudaries_com = gpd.read_file('boundaries/hti_admbnda_adm2_cnigs_20181129.shp')
+    # sets the geometry column
+    boudaries_com.set_geometry('geometry')
+    # selects features needed
+    boudaries_com = boudaries_com[['ADM2_PCODE','ADM1_EN','ADM1_FR','ADM2_EN','ADM2_FR','geometry']]
+
+    
+    # STEP 3
+    # reads population dataset
+    pop_com = pd.read_excel('datasets/hti_adminboundaries_tabulardata.xlsx',sheet_name='hti_pop2019_adm2')
+    # selects feautures needed
+    pop_com = pop_com[['adm2code','IHSI_UNFPA_2019','IHSI_UNFPA_2019_female','IHSI_UNFPA_2019_male']]
+    # renames adm1code to ADM1_PCODE
+    pop_com = pop_com.rename(columns ={"adm2code": "ADM2_PCODE"})
+
+
+
+
+     # STEP 4
+    boudaries_com =pd.merge(boudaries_com,com,how ='left',left_on=['ADM2_PCODE'],right_on= ['ADM2_PCODE'])
+    boudaries_com = pd.merge(boudaries_com,pop_com,how ='left',on=['ADM2_PCODE'])
+    boudaries_com.sort_values(by ='ADM2_PCODE')    
+
+    return boudaries_com
+     
+def load_depart(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
+
+    # STEP 1
+    # loads spa dataset
+    spa = pd.read_csv('spa.csv')
+    # replaces blank space by (_)
+    spa['facdesc_1'] = spa['facdesc_1'].str.replace(' ','_')
+    # computes dummies columns
+    spa = pd.get_dummies(spa, columns=['facdesc_1'],prefix='',prefix_sep='')
+    # sums the site health facilities
+    dept = spa.groupby(['departn','depart'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL'].sum()
+    # renames departn column to ADM1_FR perform merging
+    dept=dept.reset_index().rename(columns= {'departn':'ADM1_FR'})
+    # generates PCODE
+    dept['ADM1_PCODE'] = dept['depart'].apply(lambda x: generate_PCODE(x))
+
+    # STEP 2
+    # reads adm1 shapefiles
+    boudaries_dep = gpd.read_file('boundaries/hti_admbnda_adm1_cnigs_20181129.shp')
+    # sets the geometry column
+    boudaries_dep.set_geometry('geometry')
+    # selects features needed
+    boudaries_dep=boudaries_dep[['ADM1_EN','ADM1_FR','ADM1_HT','ADM1_PCODE','geometry']]
+
+    
+    # STEP 3
+    # reads population dataset
+    pop_dep = pd.read_excel('datasets/hti_adminboundaries_tabulardata.xlsx',sheet_name='hti_pop2019_adm1')
+    # selects feautures needed
+    pop_dep = pop_dep[['adm1code','IHSI_UNFPA_2019','IHSI_UNFPA_2019_female','IHSI_UNFPA_2019_male']]
+    # renames adm1code to ADM1_PCODE
+    pop_dep =pop_dep.rename(columns ={"adm1code": "ADM1_PCODE"})
+
+     # STEP 4
+    boudaries_dep = pd.merge(boudaries_dep,dept,how ='left',left_on=['ADM1_PCODE'],right_on= ['ADM1_PCODE'])
+    # renames column 
+    boudaries_dep = boudaries_dep.rename(columns ={'ADM1_FR_x': 'ADM1_FR'})
+    # selects features
+    columns = ['ADM1_PCODE','ADM1_EN','ADM1_FR','ADM1_HT','geometry','CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL']
+    boudaries_dep = boudaries_dep[columns]
+    # merges all dataset
+    boudaries_dep = pd.merge(boudaries_dep,pop_dep,how ='left',on='ADM1_PCODE')
+    return boudaries_dep
+
 import pandas as pd
 #reading geodata
 # read section_communales shapefile
@@ -29,42 +127,41 @@ def get_filtered_dataset(filter,col):
   
    # selects the matched admin division boundary 
     if filter == 'commune':
-        gdf = gpd.read_file('data/combined/v0_com_data.shp')
-        sectiontool.append( ("Departement","@ADM1_FR"))
-        sectiontool.append(("Commune","@ADM2_FR"))
+        gdf = load_com()
+        sectiontool.append( ("Depatman","@ADM1_FR"))
+        sectiontool.append(("Komin","@ADM2_FR"))
     elif filter == 'departement':
-        gdf = gpd.read_file('data/combined/v0_dep_data.shp')
+        gdf =load_depart()
         sectiontool.append( ("Departement","@ADM1_FR"))
-    elif filter == 'section communale':
-        gdf = gpd.read_file('data/combined/v0_sec_data.shp')
-        sectiontool.append( ("Departement","@ADM1_FR"))
-        sectiontool.append(("Commune","@ADM2_FR"))
-        sectiontool.append(("Section commune","@ADM3_FR"))
+    
 
-    # sum all the hospitals 
-    gdf['Hospitals'] = gdf[['HCR', 'HD', 'HU','hop', 'hop_specia']].sum(axis=1)
+   
 
     # selects health site facililites
     if col == 'all':
-        site_facilities_col = ['CAL', 'Dispensair', 'Hospitals']
-        sectiontool.append(("Nombre de dispensaires","@Dispensair"))
-        sectiontool.append( ("Nombre d'hopitaux ","@Hospitals"))
-        sectiontool.append( ("Nombre de centres de santé avec lits ","@CAL"))
+        site_facilities_col = ['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL']
+        sectiontool.append(("Dispanse:","@DISPENSAIRE"))
+        sectiontool.append( ("Lopital:","@HOPITAL"))
+        sectiontool.append( ("Sant sante avek kabann:","@CENTRE_DE_SANTE_AVEC_LIT"))
     elif col == 'hosp':
-        site_facilities_col = ['Hospitals']
-        sectiontool.append( ("Nombre d'hopitaux ","@Hospitals"))
+        site_facilities_col = ['HOPITAL']
+        sectiontool.append( ("Lopital","@HOPITAL"))
        
     elif col == 'cal':
-        site_facilities_col = ['CAL']
-        sectiontool.append( ("Nombre de centres de santé avec lits ","@CAL"))
+        site_facilities_col = ['CENTRE_DE_SANTE_AVEC_LIT']
+        sectiontool.append( ("Sant sante avek kabann:","@CENTRE_DE_SANTE_AVEC_LIT"))
     elif col == 'disp':
-        site_facilities_col = ['Dispensair']
-        sectiontool.append(("Nombre de dispensaires","@Dispensair"))
-   
+        site_facilities_col = ['DISPENSAIRE']
+        sectiontool.append(("Dispanse:","@DISPENSAIRE"))
+
+
+    
     # selects non site facilities columns
-    admin_cols = [col for col in gdf.columns if col not in site_facilities_col+['HCR', 'HD', 'HU','hop', 'hop_specia','Dispensair','CAL','Hospitals']]
+
+    admin_cols = [col for col in gdf.columns if col not in site_facilities_col]
      # selects columns needed to display on the map
     gdf = gdf[admin_cols+site_facilities_col]
+    gdf.rename(columns={'IHSI_UNFPA_2019':'IHSI_UNFPA'},inplace =True)
     # fill na values by 0.0
     gdf[site_facilities_col] = gdf[site_facilities_col].fillna(0.0)
     # sum the total health site facilities
@@ -79,7 +176,7 @@ def get_filtered_dataset(filter,col):
     return sectiontool,gdf
 
 # global mapping dictianary variable   
-map_dict ={'all':'Total des établissements de santé','hosp':'Hopitaux','cal':'Centres de santé avec lits','disp':'Dispensaires','disp+cal':'Dispensaires + Centres de santé avec lits','hosp+cal':'Hopitaux + Centres de santé avec lits','hosp+disp':'Hopitaux + Dispensaires'}
+map_dict ={'all':'Tout sant sante yo','hosp':'Lopital','cal':'Sant sante avek kabann:','disp':'Dispanse','commune':'komin','departement':'depatman'}
 color_map_data = None
 
 
@@ -152,7 +249,13 @@ def plot_map(gdf, column=None, title='',tooltip=None):
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-@app.route('/',methods=['GET', 'POST'])
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/index',methods=['GET', 'POST'])
 def index():
   # call the filtered dataset for departement table (division,site)
    _,gdf2 = get_filtered_dataset('departement','all')
@@ -176,13 +279,13 @@ def index():
     # call the filtered dataset for map table (division,site)
    sectiontool,gdf = get_filtered_dataset(division,etablissement)
    # plot the map
-   p3=plot_map(gdf = gdf,column="Total_sites",title='Répartition des centres de santé par '+ division,tooltip=sectiontool )
+   p3=plot_map(gdf = gdf,column="Total_sites",title='Distribisyon sant sante yo pa '+ division,tooltip=sectiontool )
    # get the script and div
    script, div = components(p3)
    # define custom css to the div
    div.replace('class="bk-root"','class="bk-root col-11 col-md-12 col-sm-12" style="height: 100vh')
    # return the index html page
-   return render_template("index.html", script=script, div=div,division=division, etablissement =etablissement,gdf2=gdf2)
+   return render_template("index.html", script=script, div=div,division=division, etablissement =etablissement,gdf2=gdf2 ,title=map_dict[division])
    
 # api route for division and site geoJson
 @app.route("/api/v1/<division>/<etablissement>")
@@ -217,9 +320,16 @@ def index2():
        col = tool[1].replace('@','')
        tool_tips['columns'].append(col)
        tool_tips['displays'].append(disp)
+
+   palette = brewer['RdYlBu'][10]
+   palette = palette[::-1]
+   color_mapper = LinearColorMapper(palette = palette, low = gdf['Total_sites'].min(), high = gdf['Total_sites'].max())
+   color_bar = ColorBar(color_mapper=color_mapper, label_standoff=8, width=500, height=20, 
+                         location=(0,0), orientation='horizontal')
+  
   
    pal = dict(color=list(color_map_data['color']),values=list(color_map_data['Total_sites']))
-   return render_template("index2.html",gdf2 =gdf2,division=division, etablissement =etablissement,tool_tips=tool_tips,palette =pal)
+   return render_template("index2.html",gdf2 =gdf2,division=division, etablissement =etablissement,tool_tips=tool_tips,palette =pal,title =map_dict[division])
 
 
     

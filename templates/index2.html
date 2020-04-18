@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Covid19 Vulnerability map</title>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.0.1.min.js"
+    integrity="sha384-JpP8FXbgAZLkfur7LiK3j9AGBhHNIvF742meBJrjO2ShJDhCG2I1uVvW+0DUtrmc"
+    crossorigin="anonymous"></script>
+   <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.0.1.min.js" crossorigin="anonymous"></script>
+   <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.0.1.min.js" crossorigin="anonymous"></script>
+
     <script src=" {{ url_for('static', filename='bootstrap/dist/css/bootstrap.css') }}"></script>
     <script src=" {{ url_for('static', filename='jquery/dist/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='leaflet/dist/leaflet.js') }}"></script>
@@ -17,7 +23,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /*Setup*/
-        @media only screen and (max-width: 600px) {
+        @media only screen and (max-width: 768px) {
             .legend i {
                 width: 10px;
                 height: 10px;
@@ -107,7 +113,7 @@
 
                                 <h3
                                     style="color:teal; font-size:36px bold;margin:auto; text-align:center; font-weight:bold">
-                                    Total centres de santé </h1>
+                                    Total sant sante </h1>
                                     <h3
                                         style="color:teal; font-size:36px bold;margin:auto; text-align:center; font-weight:bold">
                                         {{gdf2.Total_sites.sum().astype('int')}}</h1>
@@ -124,40 +130,38 @@
 
                         <select class="form-control" id="division" name="division">
 
-                            <option value='departement'>Departements</option>
-                            <option value='commune'>Communes</option>
-                            <option value='section communale'>Section Communales</option>
-
+                            <option value='departement'>Depatman</option>
+                            <option value='commune'>Komin</option>
+                            
                         </select>
                     </div>
                     <div class="form-group">
 
                         <select class="form-control" id="etablissement" name="etablissement">
 
-                            <option value='all'>Tous les etablissements</option>
-                            <option value="hosp"> Hopitaux </option>
-                            <option value="cal"> Centres de santé avec lits </option>
-                            <option value="disp"> Dispensaires </option>
+                            <option value='all'>Tout sant sante yo</option>
+                            <option value="hosp"> Lopital </option>
+                            <option value="cal"> Sant sante avek kabann </option>
+                            <option value="disp"> Dispanse </option>
                         </select>
                     </div>
 
 
-                    <button type="submit" class="btn btn-primary">Lancer</button>
+                    <button type="submit" class="btn btn-primary">Lanse</button>
                 </form>
                 <br />
                 <div class="row m-t-5">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                        <h5 class="card-title" style="font-size: 14px;">Tableau de la densité des centres de santé pour
-                            10 000 personnes</h5>
+                        <h5 class="card-title" style="font-size: 14px;">Tablo dansite sant sante pou 10k moun</h5>
                         <hr />
                         <table class="table table-striped table-dark col-12" style="font-size: 12px;text-align:right">
                             <thead>
                                 <tr>
-                                    <th scope="col">Département</th>
-                                    <th scope="col">Centres de santé</th>
-                                    <th scope="col">Population</th>
-                                    <th scope="col">Centres de santé pour 10K personnes</th>
+                                    <th scope="col">Depatman</th>
+                                    <th scope="col">Sant sante</th>
+                                    <th scope="col">Popilasyon</th>
+                                    <th scope="col">Sant sante pou 10K moun</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,7 +190,8 @@
 
             </div>
             <div class="col-lg-8 col-md-12 col-sm-12" style="height: 88vh;" >
-             <h5 style="font-size: 16px;font-weight:bold">Répartition des centres de santé par  {{division}} <button id="ressetbutton"class="btn btn-primary" style="float: right; margin-bottom:4px">Rafraichir la carte</button></h5>
+             <h5 style="font-size: 16px;font-weight:bold">Distribisyon sant sante pa  {{title}} <button id="ressetbutton"class="btn btn-primary" style="float: right; margin-bottom:4px">Relanse kat la</button></h5>
+            
              <div id="map" style="height: 90vh;">
 
              </div>
@@ -214,43 +219,38 @@
         $('#division').val(division)
         $('#etablissement').val(etablissement)
         var mapboxAccessToken = 'pk.eyJ1IjoibWFydmVsYW1hem9uMTIiLCJhIjoiY2s4b2lzbmV0MTlpNzNqbzJtdW1lcTBscCJ9.2USdsYTBodn8NXSqr2Ljlw';
-        var map = L.map('map').setView([19.071187, -72.785215], 8.5);
+        let coords =[19.071187, -72.985215];
+        var map = L.map('map').setView(coords, 8.5);
         let geojson;
+      
 
-        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
-            id: 'mapbox/light-v9',
-            tileSize: 512,
-            zoomOffset: -1,
-
-        }).addTo(map);
-        
         if (win.width() <= 768) {
-            map.setView([19.071187, -72.785215], 8)
+            map.setView(coords, 7.5)
          }
         else{
-            map.setView([19.071187, -72.785215], 8.5 )
+            map.setView(coords, 8.5 )
         }
         
 
         $('#ressetbutton').click(function(){
             console.log('hello world ...!')
-            map.setView([19.071187, -72.785215], 8.5)
+           
             var win =  $(window)
             if (win.width() <= 768) {
-                map.setView([19.071187, -72.785215], 8)
+                map.setView(coords, 7.5)
              }
             else{
-                map.setView([19.071187, -72.785215], 8.5 )
+                map.setView(coords, 8.5 )
             }
         })
        
         $(window).on('resize', function(){
             var win = $(this); //this = window
             if (win.width() <= 768) {
-                map.setView([19.071187, -72.785215], 8)
+                map.setView(coords, 7.5)
              }
             else{
-                map.setView([19.071187, -72.785215], 8.5 )
+                map.setView(coords, 8.5 )
             }
       });
 
@@ -355,13 +355,14 @@
                                 fields.map(
                                     columnname =>
                                         `<tr style="text-align: left;">
-                            <th style="padding: 4px; padding-right: 10px;">
+                            <th style="padding: 4px; padding-right: 10px;"> 
                                 ${aliases[fields.indexOf(columnname)]
                                         }
-                                
+                                                         
                             
-                            
-                            : ${handleObject(layer.feature.properties[columnname])
+                                    </th>
+                    
+                                    <td style="padding: 4px;"> ${handleObject(layer.feature.properties[columnname])
                                         }</th></tr>`
                                 ).join(''))
                             + '</table>'
