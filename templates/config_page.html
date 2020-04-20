@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.0.1.min.js"
+        integrity="sha384-JpP8FXbgAZLkfur7LiK3j9AGBhHNIvF742meBJrjO2ShJDhCG2I1uVvW+0DUtrmc"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.0.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.0.1.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        Bokeh.set_log_level("info");
+    </script>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    {% include 'include/navbar.html' %}
+    <div class="container-fluid">
+        <div class="row col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <form class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Database host</label>
+                    <input type="email" class="form-control" id="databasehost" name="databasehost" aria-describedby="emailHelp">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Database user</label>
+                    <input type="password" class="form-control" id="databaseuser" name="databaseuser">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Database name</label>
+                    <input type="password" class="form-control" id="databasename" name="databasename">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Database password</label>
+                    <input type="password" class="form-control" id="databasepassword" name="databasepassword">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Access key</label>
+                    <input type="password" class="form-control" id="accesskey" name="accesskey">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">secret key</label>
+                    <input type="password" class="form-control" id="secretkey" name="secretkey">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+
+    {% include 'include/footer' %}
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

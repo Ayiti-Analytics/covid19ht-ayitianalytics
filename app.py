@@ -347,7 +347,24 @@ def index2():
    pal = dict(color=list(color_map_data['color']),values=list(color_map_data['Total_sites']))
    return render_template("index2.html",gdf2 =gdf2,division=division, etablissement =etablissement,tool_tips=tool_tips,palette =pal,title =map_dict[division])
 
+def get_all_dept():
+   mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
+   my_list = []
+   for _,row in mspp_covid19_cases.iterrows():
+    my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
+   my_list
+   return my_list
 
+# api route for division and site geoJson
+@app.route("/api/v1/covid19ht/<departement>")
+def get_all_covid19ht (departement,methods=['GET', 'POST']):
+   mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
+   my_list = []
+   for _,row in mspp_covid19_cases.iterrows():
+     my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
+  
+   return jsonify(my_list)
+    
 
     
 if __name__ == '__main__':
