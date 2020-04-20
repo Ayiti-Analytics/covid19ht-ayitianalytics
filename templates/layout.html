@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+  
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bootstrap Documentation Template For Software Developers">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">    
+    <link rel="shortcut icon" href="favicon.ico"> 
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome JS-->
+    
+    <script defer src="{{ url_for('static', filename='assets/fontawesome/js/all.min.js') }}"></script>
+
+    <!-- Theme CSS -->  
+    <link id="theme-style" rel="stylesheet" href="{{ url_for('static', filename='assets/css/theme.css') }}">
+    {% block headblock %}
+    
+    {% endblock headblock %}
+
+</head> 
+
+<body>    
+    <header class="header fixed-top">	    
+        {% include 'include/navbar.html' %}
+    </header><!--//header-->
+    {% block body %}
+    
+    {% endblock body %}
+         
+    <!-- Javascript -->      
+    {% block footer %}
+    
+    {% endblock footer %}    
+    <script src="{{url_for('static', filename='assets/plugins/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{url_for('static', filename='assets/plugins/popper.min.js') }}"></script>
+    <script src="{{url_for('static', filename='assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>  
+
+</body>
+</html> 
+

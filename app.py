@@ -20,6 +20,16 @@ def generate_PCODE(depart):
 def generate_PCODE2(vilcom):
      code = '00'+ str(vilcom)
      return code[len(code)-2:]
+# comma
+def add_comma(data):
+    val= ''
+    index =0
+    for v in data[::-1]:
+       if index%3 == 0 and index !=0 :
+            val=val+','
+       val+=v
+       index+=1
+    return val[::-1]
 
 def load_com(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
 
@@ -31,13 +41,13 @@ def load_com(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
     # computes dummies columns
     spa = pd.get_dummies(spa, columns=['facdesc_1'],prefix='',prefix_sep='')
     # sums the site health facilities
-    com  = spa.groupby(['depart','departn','vilcomn','vilcom'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL'].sum().reset_index()
+    com  = spa.groupby(['depart','departn','vilcomn','vilcom'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL','CENTRE_DE_SANTE_SANS_LIT'].sum().reset_index()
     # renames columns needed
     com= com.rename(columns={'departn':'ADM1_FR','vilcomn':'ADM2_FR'})
     # generats PCODE
     com['ADM2_PCODE'] = com['depart'].apply(lambda x: generate_PCODE(x))+ com['vilcom'].apply(lambda x: generate_PCODE2(x))
     # remove duplicates
-    com =com.groupby(['ADM2_PCODE'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL'].sum().reset_index()
+    com =com.groupby(['ADM2_PCODE'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL','CENTRE_DE_SANTE_SANS_LIT'].sum().reset_index()
 
     # STEP 2
     # reads adm2 shapefiles
@@ -76,7 +86,7 @@ def load_depart(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
     # computes dummies columns
     spa = pd.get_dummies(spa, columns=['facdesc_1'],prefix='',prefix_sep='')
     # sums the site health facilities
-    dept = spa.groupby(['departn','depart'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL'].sum()
+    dept = spa.groupby(['departn','depart'])['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL','CENTRE_DE_SANTE_SANS_LIT'].sum()
     # renames departn column to ADM1_FR perform merging
     dept=dept.reset_index().rename(columns= {'departn':'ADM1_FR'})
     # generates PCODE
@@ -104,7 +114,7 @@ def load_depart(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
     # renames column 
     boudaries_dep = boudaries_dep.rename(columns ={'ADM1_FR_x': 'ADM1_FR'})
     # selects features
-    columns = ['ADM1_PCODE','ADM1_EN','ADM1_FR','ADM1_HT','geometry','CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL']
+    columns = ['ADM1_PCODE','ADM1_EN','ADM1_FR','ADM1_HT','geometry','CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL','CENTRE_DE_SANTE_SANS_LIT']
     boudaries_dep = boudaries_dep[columns]
     # merges all dataset
     boudaries_dep = pd.merge(boudaries_dep,pop_dep,how ='left',on='ADM1_PCODE')
@@ -139,10 +149,11 @@ def get_filtered_dataset(filter,col):
 
     # selects health site facililites
     if col == 'all':
-        site_facilities_col = ['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL']
+        site_facilities_col = ['CENTRE_DE_SANTE_AVEC_LIT','DISPENSAIRE','HOPITAL','CENTRE_DE_SANTE_SANS_LIT']
         sectiontool.append(("Dispanse:","@DISPENSAIRE"))
         sectiontool.append( ("Lopital:","@HOPITAL"))
         sectiontool.append( ("Sant sante avek kabann:","@CENTRE_DE_SANTE_AVEC_LIT"))
+        sectiontool.append( ("Sant sante san kabann:","@CENTRE_DE_SANTE_SANS_LIT"))
     elif col == 'hosp':
         site_facilities_col = ['HOPITAL']
         sectiontool.append( ("Lopital","@HOPITAL"))
@@ -152,7 +163,10 @@ def get_filtered_dataset(filter,col):
         sectiontool.append( ("Sant sante avek kabann:","@CENTRE_DE_SANTE_AVEC_LIT"))
     elif col == 'disp':
         site_facilities_col = ['DISPENSAIRE']
-        sectiontool.append(("Dispanse:","@DISPENSAIRE"))
+        sectiontool.append(("Dispansé:","@DISPENSAIRE"))
+    elif col == 'csl':
+        site_facilities_col = ['CENTRE_DE_SANTE_SANS_LIT']
+        sectiontool.append(("Sant sante san kabann::","@CENTRE_DE_SANTE_SANS_LIT"))
 
 
     
@@ -169,7 +183,7 @@ def get_filtered_dataset(filter,col):
     # compute the site  denstity per 10k people
     gdf['health_density'] = np.round((gdf['Total_sites']/gdf['IHSI_UNFPA'])*10000,3)
     # add the display total site the tooltips
-    sectiontool.append(("Nombre de sites","@Total_sites"))
+    sectiontool.append(("Kantite sant sante","@Total_sites"))
     # set the geometry
     gdf.set_geometry('geometry')
     # returns the toolTip and the geodataframe
@@ -303,6 +317,8 @@ def index2():
    gdf2.sort_values(by =['IHSI_UNFPA'],ascending=False,inplace=True)
    gdf2['Total_sites'] = gdf2['Total_sites'].astype('int')
    gdf2['IHSI_UNFPA']=gdf2['IHSI_UNFPA'].astype('int')
+   gdf2['IHSI_UNFPA']=gdf2['IHSI_UNFPA'].astype('str')
+   gdf2['IHSI_UNFPA'] =  gdf2['IHSI_UNFPA'].apply(lambda x: add_comma(x))
    gdf = None
    sectiontool=[]
    
