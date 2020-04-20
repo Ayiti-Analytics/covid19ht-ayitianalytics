@@ -13,6 +13,7 @@ import numpy as np
 from flask import jsonify
 from flask_cors import CORS
 
+
 def generate_PCODE(depart):
      code = '00'+ str(depart)
      return 'HT'+ code[len(code)-2:]
@@ -264,6 +265,19 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -382,6 +396,15 @@ def get_covid19ht2 (date = 'all',methods=['GET', 'POST']):
        for _,row in mspp_covid19_cases.iterrows():
             my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
 
+   return jsonify(my_list)
+
+@app.route("/api/v1/covid19ht/")
+def get_covid19ht3 (methods=['GET', 'POST']):
+   my_list = []
+   mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
+  
+   for _,row in mspp_covid19_cases.iterrows():
+      my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
    return jsonify(my_list)
     
 
