@@ -348,6 +348,7 @@ def index2():
    return render_template("index2.html",gdf2 =gdf2,division=division, etablissement =etablissement,tool_tips=tool_tips,palette =pal,title =map_dict[division])
 
 
+
     
 if __name__ == '__main__':
 	app.run(port=5000, debug=True)
