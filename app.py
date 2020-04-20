@@ -356,13 +356,32 @@ def get_all_dept():
    return my_list
 
 # api route for division and site geoJson
-@app.route("/api/v1/covid19ht/<departement>")
-def get_all_covid19ht (departement,methods=['GET', 'POST']):
-   mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
+@app.route("/api/v1/covid19ht/departement/<departement>")
+def get_covid19ht (departement = '',methods=['GET', 'POST']):
    my_list = []
-   for _,row in mspp_covid19_cases.iterrows():
-     my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
-  
+   mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
+   if departement == 'all':
+       for _,row in mspp_covid19_cases.iterrows():
+            my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
+   else:
+       mspp_covid19_cases = mspp_covid19_cases[mspp_covid19_cases['departement'] == departement ]
+       for _,row in mspp_covid19_cases.iterrows():
+            my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
+
+   return jsonify(my_list)
+
+@app.route("/api/v1/covid19ht/date/<date>")
+def get_covid19ht2 (date = 'all',methods=['GET', 'POST']):
+   my_list = []
+   mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
+   if date == 'all':
+       for _,row in mspp_covid19_cases.iterrows():
+            my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
+   else:
+       mspp_covid19_cases = mspp_covid19_cases[mspp_covid19_cases['document_date'] == date ]
+       for _,row in mspp_covid19_cases.iterrows():
+            my_list.append(dict(departement	= row['departement'],cas_confirmes=row['cas_confirmes'],deces = row['deces'],taux_de_letalite = row['taux_de_letalite'],document_date =row['document_date']))
+
    return jsonify(my_list)
     
 
