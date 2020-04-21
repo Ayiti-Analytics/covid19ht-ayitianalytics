@@ -12,6 +12,7 @@ import sys
 import numpy as np
 from flask import jsonify
 from flask_cors import CORS
+from flask_restplus import Api, Resource
 
 
 def generate_PCODE(depart):
@@ -263,19 +264,6 @@ def plot_map(gdf, column=None, title='',tooltip=None):
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/')

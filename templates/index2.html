@@ -34,12 +34,12 @@
         .legend span,
         .legend label {
             display: block;
-            width: 60px;
+            width: 40px;
             height: 20px;
             float: left;
             opacity: 0.7;
             text-align: center;
-            font-size: 80%
+            font-size: 60%
         }
 
         /*Setup*/
@@ -186,10 +186,15 @@
 
 
             </div>
-            <div class="col-lg-8 col-md-12 col-sm-12">
-                <h5 style="font-size: 16px;font-weight:bold; margin-top:5px">Distribisyon sant sante pa {{title}} <button
-                    id="ressetbutton" class="btn btn-primary" style="float: right; margin-bottom:4px">Relanse
-                    kat la</button></h5>
+            <div class="col-lg-8 col-md-12 col-sm-12" style="margin-top:2px;">
+               
+                <div>
+                    <button
+                    id="ressetbutton" class="btn btn-primary" style="float: right; margin-bottom:4px;display:block">Relanse
+                    kat la</button>
+                </div>
+                
+                <h5 style="font-size: 16px;font-weight:bold; margin-top:5px">Distribisyon sant sante pa {{title}}</h5>
 
                 <div class="info legend" id="myinfo">
                    
@@ -337,7 +342,14 @@
             });
         }
 
-        
+        map.on('click', function() {
+            if (map.scrollWheelZoom.enabled()) {
+              map.scrollWheelZoom.disable();
+              }
+              else {
+              map.scrollWheelZoom.enable();
+              }
+            });
 
 
         $.get('/api/v1/' + division + '/' + etablissement)
