@@ -12,7 +12,7 @@ import sys
 import numpy as np
 from flask import jsonify
 from flask_cors import CORS
-from flask_restplus import Api, Resource
+
 
 
 def generate_PCODE(depart):
