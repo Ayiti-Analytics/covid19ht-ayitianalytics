@@ -13,6 +13,8 @@ import numpy as np
 from flask import jsonify
 from flask_cors import CORS
 
+import db_conn
+
 
 
 def generate_PCODE(depart):
@@ -34,6 +36,9 @@ def add_comma(data):
     return val[::-1]
 
 def load_com(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
+    con = db_conn.get_posgres_connection()
+    spa = pd.read_sql("SELECT * FROM spa_haiti_2017",con)
+    print("Database is connected")
 
     # STEP 1
     # loads spa dataset
