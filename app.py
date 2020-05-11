@@ -144,7 +144,7 @@ def get_filtered_dataset(filter,col):
         sectiontool.append(("Komin","@ADM2_FR"))
     elif filter == 'departement':
         gdf =load_depart()
-        sectiontool.append( ("Departement","@ADM1_FR"))
+        sectiontool.append( ("Depatman","@ADM1_FR"))
     
 
    
@@ -194,7 +194,8 @@ def get_filtered_dataset(filter,col):
 # global mapping dictianary variable   
 map_dict ={'all':'Tout sant sante yo','hosp':'Lopital','cal':'Sant sante avek kabann:','disp':'Dispanse','commune':'komin','departement':'depatman'}
 color_map_data = None
-
+translator = None
+lang = 'kr'
 
 
 
@@ -268,7 +269,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html',lang=lang)
 
 
 @app.route('/index',methods=['GET', 'POST'])
@@ -347,7 +348,7 @@ def index2():
   
   
    pal = dict(color=list(color_map_data['color']),values=list(color_map_data['Total_sites']))
-   return render_template("index2.html",gdf2 =gdf2,division=division, etablissement =etablissement,tool_tips=tool_tips,palette =pal,title =map_dict[division])
+   return render_template("index2.html",gdf2 =gdf2,division=division, etablissement =etablissement,tool_tips=tool_tips,palette =pal,title =map_dict[division],lang=lang)
 
 def get_all_dept():
    mspp_covid19_cases = pd.read_csv('datasets/mspp_covid19_cases.csv')
@@ -396,6 +397,18 @@ def get_covid19ht3 (methods=['GET', 'POST']):
    return jsonify(my_list)
     
 
+@app.route("/language/<lang_>")
+def getLanguage(lang_):
+    lang = lang_
+    df = pd.read_json('translation/translator.json')
+    if lang == 'en':
+        translator = df[['en']]
+        print(df.head())
+    else:
+        translator = df[['kr']]
+        print(translator.head())
+    return translator.to_json()
+    
     
 if __name__ == '__main__':
 	app.run(port=5000, debug=True)
