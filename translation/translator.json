@@ -21,7 +21,7 @@
         "legend_title":"Number of health facilities per",
         "button_1_text":"Submit",
         "ressetbutton":"Reset map",
-        "right":"All rights reserved to Ayiti Analytics",
+        "right":"All rights reserved to <a href=\"https://www.ayitianalytics.org/\"  target=\"_blank\">Ayiti Analytics </a>",
         "purpose_header":"Purpose",
         "purpose":"This tool exists to provide reliable information on health care services in Haiti, focusing specifically on the number and distribution of health facilities and health care resources in the country. The data can be disaggregated by facility type, district, and, where data are available, by relevant socioeconomic factors.",
         "purpose1":"The health systems dashboard generates reliable information on:",
@@ -48,8 +48,12 @@
         "DataStrengthsandLimitations":"The Demographic and Health Survey interviewers are trained to collect the most accurate data as possible. However, difficulties in identifying facilities that are not registered can result in undercounting.",
         "reference_header": "References",
         "reference_text": "Institut Haïtien de l’Enfance IHE and ICF. 2019. Évaluation de la Prestation des Services de Soins de Santé, Haïti, 2017-2018. Rockville, Maryland, USA : IHE and ICF. (Link) Institut Haïtien de l’Enfance  IHE and ICF. 2018. Enquête Mortalité, Morbidité et Utilisation des Services - EMMUS-VI 2016-2017 Pétion-Ville, Haïti, et Rockville, Maryland, USA : IHE et ICF. (Link) Institut Haïtien de Statistique et d’Informatique (IHSI). Projections de la population Haitienne 2018. (Link)",
+        "reference1": "Institut Haïtien de l’Enfance IHE and ICF. 2019. Évaluation de la Prestation des Services de Soins de Santé, Haïti, 2017-2018.",
+        "reference2": "Institut Haïtien de l’Enfance  IHE and ICF. 2018. Enquête Mortalité, Morbidité et Utilisation des Services - EMMUS-VI 2016-2017.",
+        "reference3":"Institut Haïtien de l’Enfance  IHE and ICF. 2018. Enquête Mortalité, Morbidité et Utilisation des Services - EMMUS-VI 2016-2017.",
         "tooltip_dep":"Departement",
         "tooltip_com":"Commune"
+
     },
 
     "kr":{
@@ -73,15 +77,15 @@
         "legend_title":"Distribisyon sant sante pa",
         "button_1_text":"Lanse",
         "ressetbutton":"relanse kat la",
-        "right":"Ayiti Analytics rez\u00e8ve tout dwa",
+        "right":"<a href=\"https://www.ayitianalytics.org/\"  target=\"_blank\">Ayiti Analytics </a> rez\u00e8ve tout dwa pou zouti sila",
         "purpose_header":"Entansyon",
-        "purpose":"Ayiti Analytics devlope Zouti sila nan objektif pou jwenn bon jan enf\u00f2masyon sou s\u00e8vis laswenyaj. Li p\u00e8m\u00e8t nou konnen konbyen sant sante kap bay popilasyon an s\u00e8vis laswenyaj nan tout komin ak depatman nan peyi Ayiti. Li mete akl\u00e8 tout resous laswenyaj ou ka jwenn nan tout komin ak depatman peyi a. Li montre konbyen sant sante ou ka jwenn pa komin ou pa depatman ak tout l\u00f2t resous ki mache av\u00e8k domenn laswenyaj ak fakt\u00e8 ekonomik ki p\u00e8tinan ki eksplike inf\u00f2masyon sila.",
+        "purpose":"<a href=\"https://www.ayitianalytics.org/\"  target=\"_blank\">Ayiti Analytics </a> devlope Zouti sila nan objektif pou jwenn bon jan enf\u00f2masyon sou s\u00e8vis laswenyaj. Li p\u00e8m\u00e8t nou konnen konbyen sant sante kap bay popilasyon an s\u00e8vis laswenyaj nan tout komin ak depatman nan peyi Ayiti. Li mete akl\u00e8 tout resous laswenyaj ou ka jwenn nan tout komin ak depatman peyi a. Li montre konbyen sant sante ou ka jwenn pa komin ou pa depatman ak tout l\u00f2t resous ki mache av\u00e8k domenn laswenyaj ak fakt\u00e8 ekonomik ki p\u00e8tinan ki eksplike inf\u00f2masyon sila.",
         "purpose1":"Zouti sila p\u00e8m\u00e8t nou jwenn pou yon popilasyon kap viv nan yon lokalite (komin oswa depatman)",
         "purpose1_1":"Gwos\u00e8 ak kantite sant sante ki genyen",
         "purpose1_2":"Kantite kabann lopital ki genyen",
         "purpose1_3":"Kantite pwofesyonel sante pou 10 000 moun nan lokalite yo",
-        "definition_header": "Definition",
-        "definition":"In the tool, you\u2019ll also find Health Care Facilities that we have categorized by",
+        "definition_header": "Definisyon done sila yo",
+        "definition":"<a href=\"/index2\">Zouti sila<a> pèmèt nou jwenn pou yon popilasyon kap viv nan yon lokalitey",
         "definition1":" Sant sante ki bay laswenyaj yo divize an :",
         "definition1_1":"Sant sante avèk kabann",
         "definition1_2":"Sant sante san kabann",
@@ -100,7 +104,10 @@
         "limitations":"Institut Ha\u00eftien de l\u2019Enfance IHE and ICF. 2019. \u00c9valuation de la Prestation des Services de Soins de Sant\u00e9, Ha\u00efti, 2017-2018.(Link) Institut Ha\u00eftien de l\u2019Enfance IHE and ICF. 2018. Enqu\u00eate Mortalit\u00e9, Morbidit\u00e9 et Utilisation des Services - EMMUS-VI 2016-2017. (Link) Institut Ha\u00eftien de Statistique et d\u2019Informatique (IHSI). Projections de la population Haitienne 2018. (Link)",
         "reference_header": "Referans",
         "reference_text": "Institut Haïtien de l’Enfance IHE and ICF. 2019 Évaluation de la Prestation des Services de Soins de Santé, Haïti, 2017-2018. Rockville, Maryland, USA : IHE and ICF. (Link) Institut Haïtien de l’Enfance  IHE and ICF. 2018. Enquête Mortalité, Morbidité et Utilisation des Services - EMMUS-VI 2016-2017 Pétion-Ville, Haïti, et Rockville, Maryland, USA : IHE et ICF. (Link) Institut Haïtien de Statistique et d’Informatique (IHSI). Projections de la population Haitienne 2018. (Link)",
-        "Right":"Ayiti Analytics rez\u00e8ve tout dwa \u00a9 pou travay sila",
+        "reference1": "Institut Haïtien de l’Enfance IHE and ICF. 2019. Évaluation de la Prestation des Services de Soins de Santé, Haïti, 2017-2018.",
+        "reference2": "Institut Haïtien de l’Enfance  IHE and ICF. 2018. Enquête Mortalité, Morbidité et Utilisation des Services - EMMUS-VI 2016-2017.",
+        "reference3":"Institut Haïtien de l’Enfance  IHE and ICF. 2018. Enquête Mortalité, Morbidité et Utilisation des Services - EMMUS-VI 2016-2017.",
+        "Right":"<a href=\"https://www.ayitianalytics.org/\"  target=\"_blank\">Ayiti Analytics </a> rez\u00e8ve tout dwa \u00a9 pou travay sila",
         "tooltip_dep":"Depatman",
         "tooltip_com":"Komin"
         }

@@ -202,7 +202,8 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
     <script>
-        let lang_ =localStorage.getItem('lang')
+        let lang_ =localStorage.getItem('lang') === null? 'kr':localStorage.getItem('lang')
+       
         let translator = null
         let translation = $('#translation')
         translation.val(lang_)
@@ -210,151 +211,8 @@
                 .done(
                     reponse => {
                         translator = JSON.parse(reponse)
-
-                        if (translation.val() === 'en') {
-
-                            // navbar translation
-                            localStorage.setItem('lang','en')
-                            let site_name = $('#site_name')[0];
-                            site_name.innerHTML = translator.en.site_name;
-                            let home = $('#home')[0];
-                            home.innerHTML = translator.en.home;
-                            let map_title = $('#map_title')[0];
-                            map_title.innerHTML = translator.en.map;
-                            let dashboard = $('#dashboard')[0];
-
-                            // index content translation
-                            dashboard.innerHTML = translator.en.dashboard;
-                            let purpose_header = $('#purpose_header')[0];
-                            purpose_header.innerHTML = translator.en.purpose_header;
-                            let definition_header = $('#definition_header')[0];
-                            definition_header.innerHTML = translator.en.definition_header;
-                            let datasource_header = $('#datasource_header')[0];
-                            datasource_header.innerHTML = translator.en.datasource_header;
-                            let reference_header = $('#reference_header')[0];
-                            reference_header.innerHTML = translator.en.reference_header;
-
-
-                            // purpose content translation
-                            let reference_header1 = $('#purpose_header1')[0];
-                            reference_header1.innerHTML = translator.en.purpose_header;
-
-                            let purpose = $('#purpose')[0];
-                            purpose.innerHTML = "<p>" + translator.en.purpose + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<p>" + translator.en.purpose1 + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<ul>" + "<li>" + translator.en.purpose1_1 + "</li>" + "<li>" + translator.en.purpose1_2 + "</li>" + "<li>" + translator.en.purpose1_3 + "</li></ul></p>";
-
-
-                            // definition contetnt 
-                            let definition_header2 = $('#definition_header2')[0];
-                            definition_header2.innerHTML = translator.en.definition_header;
-
-
-                            let definition = $('#definition')[0];
-                            definition.innerHTML = "<p>" + translator.en.definition;
-                            definition.innerHTML = definition.innerHTML + "<ol><li><p>" + translator.en.definition1 + "</p>"
-                                + "<ul><li>" + translator.en.definition1_1 + "</li>"
-                                + "<li>" + translator.en.definition1_2 + "</li>"
-                                + "<li>" + translator.en.definition1_3 + "</li>"
-                                + "<li>" + translator.en.definition1_4 + "</li></ul></li>"
-                                + "<li><p>" + translator.en.definition2 + "</p>"
-                                + "<ul><li>" + translator.en.definition2_1 + "</li>"
-                                + "<li>" + translator.en.definition2_2 + "</li>"
-                                + "<li>" + translator.en.definition2_3 + "</li>"
-                                + "<li>" + translator.en.definition2_4 + "</li></ul></li></ol>"
-                                + "<p>" + translator.en.definition3
-                                + "<ul><li>" + translator.en.definition3_1 + "</li>"
-                                + "<li>" + translator.en.definition3_2 + "</li>"
-                                + "<li>" + translator.en.definition3_2 + "</li></ul></p>"
-
-                            let datasource_header2 = $('#datasource_header2')[0];
-                            datasource_header2.innerHTML = translator.en.datasource_header;
-
-                            let datasource = $('#datasource')[0];
-                            datasource.innerHTML = "<p>" + translator.en.datasource + "</p>";
-
-
-                            let reference_header2 = $('#reference_header2')[0];
-                            reference_header2.innerHTML = translator.en.reference_header + "</p>";
-
-                            let reference = $('#reference')[0];
-                            reference.innerHTML = "<p>" + translator.en.reference_text + "</p>";
-
-                            let right = $('#right')[0];
-                            right.innerHTML = translator.en.right + " &copy;";
-
-                        } else {
-                            // navbar translation
-                            localStorage.setItem('lang','kr')
-                            let site_name = $('#site_name')[0];
-                            site_name.innerHTML = translator.kr.site_name;
-                            let home = $('#home')[0];
-                            home.innerHTML = translator.kr.home;
-                            let map_title = $('#map_title')[0];
-                            map_title.innerHTML = translator.kr.map;
-                            let dashboard = $('#dashboard')[0];
-
-                            // index content translation
-                            dashboard.innerHTML = translator.kr.dashboard;
-                            let purpose_header = $('#purpose_header')[0];
-                            purpose_header.innerHTML = translator.kr.purpose_header;
-                            let definition_header = $('#definition_header')[0];
-                            definition_header.innerHTML = translator.kr.definition_header;
-                            let datasource_header = $('#datasource_header')[0];
-                            datasource_header.innerHTML = translator.kr.datasource_header;
-                            let reference_header = $('#reference_header')[0];
-                            reference_header.innerHTML = translator.kr.reference_header;
-
-
-                            // purpose content translation
-                            let reference_header1 = $('#purpose_header1')[0];
-                            reference_header1.innerHTML = translator.kr.purpose_header;
-
-                            let purpose = $('#purpose')[0];
-                            purpose.innerHTML = "<p>" + translator.kr.purpose + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<p>" + translator.kr.purpose1 + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<ul>" + "<li>" + translator.kr.purpose1_1 + "</li>" + "<li>" + translator.kr.purpose1_2 + "</li>" + "<li>" + translator.kr.purpose1_3 + "</li></ul></p>";
-
-
-                            // definition contetnt 
-                            let definition_header2 = $('#definition_header2')[0];
-                            definition_header2.innerHTML = translator.kr.definition_header;
-
-
-                            let definition = $('#definition')[0];
-                            definition.innerHTML = "<p>" + translator.kr.definition;
-                            definition.innerHTML = definition.innerHTML + "<ol><li><p>" + translator.kr.definition1 + "</p>"
-                                + "<ul><li>" + translator.kr.definition1_1 + "</li>"
-                                + "<li>" + translator.kr.definition1_2 + "</li>"
-                                + "<li>" + translator.kr.definition1_3 + "</li>"
-                                + "<li>" + translator.kr.definition1_4 + "</li></ul></li>"
-                                + "<li><p>" + translator.kr.definition2 + "</p>"
-                                + "<ul><li>" + translator.kr.definition2_1 + "</li>"
-                                + "<li>" + translator.kr.definition2_2 + "</li>"
-                                + "<li>" + translator.kr.definition2_3 + "</li>"
-                                + "<li>" + translator.kr.definition2_4 + "</li></ul></li></ol>"
-                                + "<p>" + translator.kr.definition3
-                                + "<ul><li>" + translator.kr.definition3_1 + "</li>"
-                                + "<li>" + translator.kr.definition3_2 + "</li>"
-                                + "<li>" + translator.kr.definition3_2 + "</li></ul></p>"
-
-                            let datasource_header2 = $('#datasource_header2')[0];
-                            datasource_header2.innerHTML = translator.kr.datasource_header;
-
-                            let datasource = $('#datasource')[0];
-                            datasource.innerHTML = "<p>" + translator.kr.datasource + "</p>";
-
-
-                            let reference_header2 = $('#reference_header2')[0];
-                            reference_header2.innerHTML = translator.kr.reference_header + "</p>";
-
-                            let reference = $('#reference')[0];
-                            reference.innerHTML = "<p>" + translator.kr.reference_text + "</p>";
-
-                            let right = $('#right')[0];
-                            right.innerHTML = translator.kr.right + " &copy;";
-
-                        }
+                        translate()
+                      
 
                     }
                 );
@@ -363,161 +221,166 @@
                 .done(
                     reponse => {
                         translator = JSON.parse(reponse)
-
-                        if (translation.val() === 'en') {
-                            localStorage.setItem('lang','en')
-                            // navbar translation
-                            let site_name = $('#site_name')[0];
-                            site_name.innerHTML = translator.en.site_name;
-                            let home = $('#home')[0];
-                            home.innerHTML = translator.en.home;
-                            let map_title = $('#map_title')[0];
-                            map_title.innerHTML = translator.en.map;
-                            let dashboard = $('#dashboard')[0];
-
-                            // index content translation
-                            dashboard.innerHTML = translator.en.dashboard;
-                            let purpose_header = $('#purpose_header')[0];
-                            purpose_header.innerHTML = translator.en.purpose_header;
-                            let definition_header = $('#definition_header')[0];
-                            definition_header.innerHTML = translator.en.definition_header;
-                            let datasource_header = $('#datasource_header')[0];
-                            datasource_header.innerHTML = translator.en.datasource_header;
-                            let reference_header = $('#reference_header')[0];
-                            reference_header.innerHTML = translator.en.reference_header;
-
-
-                            // purpose content translation
-                            let reference_header1 = $('#purpose_header1')[0];
-                            reference_header1.innerHTML = translator.en.purpose_header;
-
-                            let purpose = $('#purpose')[0];
-                            purpose.innerHTML = "<p>" + translator.en.purpose + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<p>" + translator.en.purpose1 + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<ul>" + "<li>" + translator.en.purpose1_1 + "</li>" + "<li>" + translator.en.purpose1_2 + "</li>" + "<li>" + translator.en.purpose1_3 + "</li></ul></p>";
-
-
-                            // definition contetnt 
-                            let definition_header2 = $('#definition_header2')[0];
-                            definition_header2.innerHTML = translator.en.definition_header;
-
-
-                            let definition = $('#definition')[0];
-                            definition.innerHTML = "<p>" + translator.en.definition;
-                            definition.innerHTML = definition.innerHTML + "<ol><li><p>" + translator.en.definition1 + "</p>"
-                                + "<ul><li>" + translator.en.definition1_1 + "</li>"
-                                + "<li>" + translator.en.definition1_2 + "</li>"
-                                + "<li>" + translator.en.definition1_3 + "</li>"
-                                + "<li>" + translator.en.definition1_4 + "</li></ul></li>"
-                                + "<li><p>" + translator.en.definition2 + "</p>"
-                                + "<ul><li>" + translator.en.definition2_1 + "</li>"
-                                + "<li>" + translator.en.definition2_2 + "</li>"
-                                + "<li>" + translator.en.definition2_3 + "</li>"
-                                + "<li>" + translator.en.definition2_4 + "</li></ul></li></ol>"
-                                + "<p>" + translator.en.definition3
-                                + "<ul><li>" + translator.en.definition3_1 + "</li>"
-                                + "<li>" + translator.en.definition3_2 + "</li>"
-                                + "<li>" + translator.en.definition3_2 + "</li></ul></p>"
-
-                            let datasource_header2 = $('#datasource_header2')[0];
-                            datasource_header2.innerHTML = translator.en.datasource_header;
-
-                            let datasource = $('#datasource')[0];
-                            datasource.innerHTML = "<p>" + translator.en.datasource + "</p>";
-
-
-                            let reference_header2 = $('#reference_header2')[0];
-                            reference_header2.innerHTML = translator.en.reference_header + "</p>";
-
-                            let reference = $('#reference')[0];
-                            reference.innerHTML = "<p>" + translator.en.reference_text + "</p>";
-
-                            let right = $('#right')[0];
-                            right.innerHTML = translator.en.right + " &copy;";
-
-                        } else {
-                            // navbar translation
-                            localStorage.setItem('lang','kr')
-                            let site_name = $('#site_name')[0];
-                            site_name.innerHTML = translator.kr.site_name;
-                            let home = $('#home')[0];
-                            home.innerHTML = translator.kr.home;
-                            let map_title = $('#map_title')[0];
-                            map_title.innerHTML = translator.kr.map;
-                            let dashboard = $('#dashboard')[0];
-
-                            // index content translation
-                            dashboard.innerHTML = translator.kr.dashboard;
-                            let purpose_header = $('#purpose_header')[0];
-                            purpose_header.innerHTML = translator.kr.purpose_header;
-                            let definition_header = $('#definition_header')[0];
-                            definition_header.innerHTML = translator.kr.definition_header;
-                            let datasource_header = $('#datasource_header')[0];
-                            datasource_header.innerHTML = translator.kr.datasource_header;
-                            let reference_header = $('#reference_header')[0];
-                            reference_header.innerHTML = translator.kr.reference_header;
-
-
-                            // purpose content translation
-                            let reference_header1 = $('#purpose_header1')[0];
-                            reference_header1.innerHTML = translator.kr.purpose_header;
-
-                            let purpose = $('#purpose')[0];
-                            purpose.innerHTML = "<p>" + translator.kr.purpose + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<p>" + translator.kr.purpose1 + "</p>";
-                            purpose.innerHTML = purpose.innerHTML + "<ul>" + "<li>" + translator.kr.purpose1_1 + "</li>" + "<li>" + translator.kr.purpose1_2 + "</li>" + "<li>" + translator.kr.purpose1_3 + "</li></ul></p>";
-
-
-                            // definition contetnt 
-                            let definition_header2 = $('#definition_header2')[0];
-                            definition_header2.innerHTML = translator.kr.definition_header;
-
-
-                            let definition = $('#definition')[0];
-                            definition.innerHTML = "<p>" + translator.kr.definition;
-                            definition.innerHTML = definition.innerHTML + "<ol><li><p>" + translator.kr.definition1 + "</p>"
-                                + "<ul><li>" + translator.kr.definition1_1 + "</li>"
-                                + "<li>" + translator.kr.definition1_2 + "</li>"
-                                + "<li>" + translator.kr.definition1_3 + "</li>"
-                                + "<li>" + translator.kr.definition1_4 + "</li></ul></li>"
-                                + "<li><p>" + translator.kr.definition2 + "</p>"
-                                + "<ul><li>" + translator.kr.definition2_1 + "</li>"
-                                + "<li>" + translator.kr.definition2_2 + "</li>"
-                                + "<li>" + translator.kr.definition2_3 + "</li>"
-                                + "<li>" + translator.kr.definition2_4 + "</li></ul></li></ol>"
-                                + "<p>" + translator.kr.definition3
-                                + "<ul><li>" + translator.kr.definition3_1 + "</li>"
-                                + "<li>" + translator.kr.definition3_2 + "</li>"
-                                + "<li>" + translator.kr.definition3_2 + "</li></ul></p>"
-
-                            let datasource_header2 = $('#datasource_header2')[0];
-                            datasource_header2.innerHTML = translator.kr.datasource_header;
-
-                            let datasource = $('#datasource')[0];
-                            datasource.innerHTML = "<p>" + translator.kr.datasource + "</p>";
-
-
-                            let reference_header2 = $('#reference_header2')[0];
-                            reference_header2.innerHTML = translator.kr.reference_header + "</p>";
-
-                            let reference = $('#reference')[0];
-                            reference.innerHTML = "<p>" + translator.kr.reference_text + "</p>";
-
-                            let right = $('#right')[0];
-                            right.innerHTML = translator.kr.right + " &copy;";
-
-                        }
+                        translate()
+                        
 
                     }
                 );
 
 
-
+ 
 
 
         }
         )
+    function translate(){
+        if (translation.val() === 'en') {
+            localStorage.setItem('lang','en')
+            // navbar translation
+            let site_name = $('#site_name')[0];
+            site_name.innerHTML = translator.en.site_name;
+            let home = $('#home')[0];
+            home.innerHTML = translator.en.home;
+            let map_title = $('#map_title')[0];
+            map_title.innerHTML = translator.en.map;
+            let dashboard = $('#dashboard')[0];
 
+            // index content translation
+            dashboard.innerHTML = translator.en.dashboard;
+            let purpose_header = $('#purpose_header')[0];
+            purpose_header.innerHTML = translator.en.purpose_header;
+            let definition_header = $('#definition_header')[0];
+            definition_header.innerHTML = translator.en.definition_header;
+            let datasource_header = $('#datasource_header')[0];
+            datasource_header.innerHTML = translator.en.datasource_header;
+            let reference_header = $('#reference_header')[0];
+            reference_header.innerHTML = translator.en.reference_header;
+
+
+            // purpose content translation
+            let reference_header1 = $('#purpose_header1')[0];
+            reference_header1.innerHTML = translator.en.purpose_header;
+
+            let purpose = $('#purpose')[0];
+            purpose.innerHTML = "<p>" + translator.en.purpose + "</p>";
+            purpose.innerHTML = purpose.innerHTML + "<p>" + translator.en.purpose1 + "</p>";
+            purpose.innerHTML = purpose.innerHTML + "<ul>" + "<li>" + translator.en.purpose1_1 + "</li>" + "<li>" + translator.en.purpose1_2 + "</li>" + "<li>" + translator.en.purpose1_3 + "</li></ul></p>";
+
+
+            // definition contetnt 
+            let definition_header2 = $('#definition_header2')[0];
+            definition_header2.innerHTML = translator.en.definition_header;
+
+
+            let definition = $('#definition')[0];
+            definition.innerHTML = "<p>" + translator.en.definition;
+            definition.innerHTML = definition.innerHTML + "<ol><li><p>" + translator.en.definition1 + "</p>"
+                + "<ul><li>" + translator.en.definition1_1 + "</li>"
+                + "<li>" + translator.en.definition1_2 + "</li>"
+                + "<li>" + translator.en.definition1_3 + "</li>"
+                + "<li>" + translator.en.definition1_4 + "</li></ul></li>"
+                + "<li><p>" + translator.en.definition2 + "</p>"
+                + "<ul><li>" + translator.en.definition2_1 + "</li>"
+                + "<li>" + translator.en.definition2_2 + "</li>"
+                + "<li>" + translator.en.definition2_3 + "</li>"
+                + "<li>" + translator.en.definition2_4 + "</li></ul></li></ol>"
+                + "<p>" + translator.en.definition3
+                + "<ul><li>" + translator.en.definition3_1 + "</li>"
+                + "<li>" + translator.en.definition3_2 + "</li>"
+                + "<li>" + translator.en.definition3_2 + "</li></ul></p>"
+
+            let datasource_header2 = $('#datasource_header2')[0];
+            datasource_header2.innerHTML = translator.en.datasource_header;
+
+            let datasource = $('#datasource')[0];
+            datasource.innerHTML = "<p>" + translator.en.datasource + "</p>";
+
+
+            let reference_header2 = $('#reference_header2')[0];
+            reference_header2.innerHTML = translator.en.reference_header + "</p>";
+
+            reference.innerHTML = "<p>" + translator.en.reference1 + "<a href=\"https://dhsprogram.com/publications/publication-SPA29-SPA-Final-Reports.cfm\">(link)</a>"+ "</p>"
+            +  "<p>" + translator.en.reference2 +"<a href=\"https://dhsprogram.com/publications/publication-FR326-DHS-Final-Reports.cfm\">(link)</a>"+ "</p>"
+            +  "<p>"+ translator.en.reference3 +"<a href=\"http://www.rgph-haiti.ht\">(link)</a>"+ "</p>"
+
+            let right = $('#right')[0];
+            right.innerHTML = translator.en.right + " &copy;";
+
+        } else {
+            // navbar translation
+            localStorage.setItem('lang','kr')
+            let site_name = $('#site_name')[0];
+            site_name.innerHTML = translator.kr.site_name;
+            let home = $('#home')[0];
+            home.innerHTML = translator.kr.home;
+            let map_title = $('#map_title')[0];
+            map_title.innerHTML = translator.kr.map;
+            let dashboard = $('#dashboard')[0];
+
+            // index content translation
+            dashboard.innerHTML = translator.kr.dashboard;
+            let purpose_header = $('#purpose_header')[0];
+            purpose_header.innerHTML = translator.kr.purpose_header;
+            let definition_header = $('#definition_header')[0];
+            definition_header.innerHTML = translator.kr.definition_header;
+            let datasource_header = $('#datasource_header')[0];
+            datasource_header.innerHTML = translator.kr.datasource_header;
+            let reference_header = $('#reference_header')[0];
+            reference_header.innerHTML = translator.kr.reference_header;
+
+
+            // purpose content translation
+            let reference_header1 = $('#purpose_header1')[0];
+            reference_header1.innerHTML = translator.kr.purpose_header;
+
+            let purpose = $('#purpose')[0];
+            purpose.innerHTML = "<p>" + translator.kr.purpose + "</p>";
+            purpose.innerHTML = purpose.innerHTML + "<p>" + translator.kr.purpose1 + "</p>";
+            purpose.innerHTML = purpose.innerHTML + "<ul>" + "<li>" + translator.kr.purpose1_1 + "</li>" + "<li>" + translator.kr.purpose1_2 + "</li>" + "<li>" + translator.kr.purpose1_3 + "</li></ul></p>";
+
+
+            // definition contetnt 
+            let definition_header2 = $('#definition_header2')[0];
+            definition_header2.innerHTML = translator.kr.definition_header;
+
+
+            let definition = $('#definition')[0];
+            definition.innerHTML = "<p>" + translator.kr.definition;
+            definition.innerHTML = definition.innerHTML + "<ol><li><p>" + translator.kr.definition1 + "</p>"
+                + "<ul><li>" + translator.kr.definition1_1 + "</li>"
+                + "<li>" + translator.kr.definition1_2 + "</li>"
+                + "<li>" + translator.kr.definition1_3 + "</li>"
+                + "<li>" + translator.kr.definition1_4 + "</li></ul></li>"
+                + "<li><p>" + translator.kr.definition2 + "</p>"
+                + "<ul><li>" + translator.kr.definition2_1 + "</li>"
+                + "<li>" + translator.kr.definition2_2 + "</li>"
+                + "<li>" + translator.kr.definition2_3 + "</li>"
+                + "<li>" + translator.kr.definition2_4 + "</li></ul></li></ol>"
+                + "<p>" + translator.kr.definition3
+                + "<ul><li>" + translator.kr.definition3_1 + "</li>"
+                + "<li>" + translator.kr.definition3_2 + "</li>"
+                + "<li>" + translator.kr.definition3_2 + "</li></ul></p>"
+
+            let datasource_header2 = $('#datasource_header2')[0];
+            datasource_header2.innerHTML = translator.kr.datasource_header;
+
+            let datasource = $('#datasource')[0];
+            datasource.innerHTML = "<p>" + translator.kr.datasource + "</p>";
+
+
+            let reference_header2 = $('#reference_header2')[0];
+            reference_header2.innerHTML = translator.kr.reference_header;
+
+            let reference = $('#reference')[0];
+            reference.innerHTML = "<p>" + translator.kr.reference1 + "<a href=\"https://dhsprogram.com/publications/publication-SPA29-SPA-Final-Reports.cfm\">(lyen)</a>"+ "</p>"
+            +  "<p>" + translator.kr.reference2 +"<a href=\"https://dhsprogram.com/publications/publication-FR326-DHS-Final-Reports.cfm\">(lyen)</a>"+ "</p>"
+            +  "<p>"+ translator.kr.reference3 +"<a href=\"http://www.rgph-haiti.ht\">(lyen)</a>"+ "</p>"
+
+            let right = $('#right')[0];
+            right.innerHTML = translator.kr.right + " &copy;";
+
+        }
+    }
     </script>
 </body>
 
