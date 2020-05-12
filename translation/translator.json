@@ -43,7 +43,7 @@
         "definition3":"You will also find resource availability relative to the population:",
         "definition3_1":"Number of health facilities per 10,000 people",
         "definition3_2":"Number of in-patient beds available per 10,000 people",
-        "definitions3_3":"Number of core health workers available per 10,000 people",
+        "definition3_3":"Number of core health workers available per 10,000 people",
         "datasource_header":"Datasources",
         "datasource":"Facility data are reported from the 2017-2018 Service Provision Assessment (SPA) survey in Haiti, a nationally representative survey of health facilities developed by USAID\n and implemented in partnership with the Institut Ha\u00eftien de l\u2019Enfance (IHE) and the Minist\u00e8re de la Sant\u00e9 Publique et de la Population (MSPP). Socioeconomic and demographic data are from \nthe Demographic and Health Survey 2016-2017 (Enqu\u00eate Mortalit\u00e9, Morbidit\u00e9 et Utilisation des Services (EMMUS-VI) 2016-2017). Population data are from the most recent census and 2018 \npopulation projections from the Haitian Institute of Statistics (Institut Ha\u00eftien de Statistique et d'Informatique).",
         "DataStrengthsandLimitations":"The Demographic and Health Survey interviewers are trained to collect the most accurate data as possible. However, difficulties in identifying facilities that are not registered can result in undercounting.",
