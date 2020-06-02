@@ -12,7 +12,7 @@ import sys
 import numpy as np
 from flask import jsonify
 from flask_cors import CORS
-import boto3
+
 from botocore.exceptions import ClientError
 import datetime
 import os
