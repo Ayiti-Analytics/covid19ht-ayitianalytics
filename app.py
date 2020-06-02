@@ -12,7 +12,17 @@ import sys
 import numpy as np
 from flask import jsonify
 from flask_cors import CORS
-
+import boto3
+from botocore.exceptions import ClientError
+import datetime
+import os
+import requests
+from dash import Dash
+import dash_core_components as dcc
+import dash_html_components as html
+import dash_bootstrap_components as dbc
+import dash_dangerously_set_inner_html
+import pandas as pd
 
 
 def generate_PCODE(depart):
@@ -122,7 +132,7 @@ def load_depart(spa=None,dept=None,boudaries_dep=None,pop_dep=None):
     boudaries_dep = pd.merge(boudaries_dep,pop_dep,how ='left',on='ADM1_PCODE')
     return boudaries_dep
 
-import pandas as pd
+
 #reading geodata
 # read section_communales shapefile
 # create dataset function
@@ -263,13 +273,103 @@ def plot_map(gdf, column=None, title='',tooltip=None):
 
 
 
+
+
+
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+external_stylesheets = [dbc.themes.BOOTSTRAP,'/static/styles.css']
+app2 = Dash(__name__,
+               server=app,
+               url_base_pathname='/dashboard/',
+               external_stylesheets =external_stylesheets,
+               assets_external_path="/static/"
+               )
+
+df = pd.read_csv('https://gist.githubusercontent.com/chriddyp/5d1ea79569ed194d432e56108a04d188/raw/a9f9e8076b837d541398e999dcbac2b2826a81f8/gdp-life-exp-2007.csv')
+
+
+app2.layout = html.Div([
+    dash_dangerously_set_inner_html.DangerouslySetInnerHTML(
+    """
+     <nav class="navbar-expand-md navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="/index2"> <img src="{{url_for('static',filename ='AYITI ANALYTICS_final_variation-14.png')}}" alt="Ayiti Analytics"  height="100px" width="100px"><span  id="site_name"> Zouti Laswenyaj</span></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="/" id="home">Paj akèy<span class="sr-only">(current)</span></a>
+        </li>
+         
+          <li class="nav-item">
+              <a class="nav-link" href="/index2" id ="map_title">Kat entèaktif<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/dashboard" id="dashboard">Tablo<span class="sr-only">(current)</span></a>
+          </li>
+
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <select class="form-control" id="translation" name="translation">
+                <option value='kr'>Kreyòl</option>
+                <option value='en'>English</option>
+                
+
+            </select>
+        </li>
+         
+         
+
+      </ul>
+  </div>
+</nav>
+    """
+    ),
+    dcc.Graph(
+        id='life-exp-vs-gdp',
+        figure={
+            'data': [
+                dict(
+                    x=df[df['continent'] == i]['gdp per capita'],
+                    y=df[df['continent'] == i]['life expectancy'],
+                    text=df[df['continent'] == i]['country'],
+                    mode='markers',
+                    opacity=0.7,
+                    marker={
+                        'size': 15,
+                        'line': {'width': 0.5, 'color': 'white'}
+                    },
+                    name=i
+                ) for i in df.continent.unique()
+            ],
+            'layout': dict(
+                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+                yaxis={'title': 'Life Expectancy'},
+                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                legend={'x': 0, 'y': 1},
+                hovermode='closest'
+            )
+        }
+    )
+])
+
+
+@app.route("/dashboard")
+def MyDashApp():
+    return app.index()
 
 
 @app.route('/')
 def home():
     return render_template('home.html',lang=lang)
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html',lang=lang)
 
 
 @app.route('/index',methods=['GET', 'POST'])
